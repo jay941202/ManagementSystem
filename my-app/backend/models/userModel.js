@@ -8,8 +8,9 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     number: {
-      type: String,
+      type: Number,
       required: true,
+      default: 0,
     },
     password: {
       type: String,
@@ -40,8 +41,8 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
-
 userSchema.methods.matchPassword = async function (enteredPassword) {
+  console.log("Comparing:", enteredPassword, "to hash:", this.password);
   return await bcrypt.compare(enteredPassword, this.password);
 };
 

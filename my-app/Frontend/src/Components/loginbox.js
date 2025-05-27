@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import API from "../API/api";
+import SignUpModal from "./signUpModal";
+import logo from "../Assets/logo.png";
 
 export default function Loginbox() {
   const [form, setForm] = useState({ name: "", password: "" });
-  const [message, setMessage] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [buttonActivate, setButtonActivate] = useState(true);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -15,21 +18,29 @@ export default function Loginbox() {
     try {
       const res = await API.post("/user/login", form);
       localStorage.setItem("token", res.data.token);
-      setMessage("로그인성공");
-      console.log(message);
+      alert(`로그인 성공`);
     } catch (error) {
-      setMessage(`로그인 실패 ${error}`);
-      console.log(message);
+      alert(`로그인 실패 ${error}`);
     }
   };
   return (
-    <div className="min-h-screen flex items-center justify-center bg-twohas">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
+      <div className="relative w-full max-w-4xl h-48 md:h-64 mb-20 mx-auto">
+        <img
+          src={logo}
+          alt="Background Logo"
+          className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none select-none z-0"
+        />
+        <h1 className="text-twohas text-5xl md:text-6xl font-extrabold drop-shadow-lg select-none relative z-10 text-center flex items-center justify-center h-full">
+          Twoha's Cafe
+        </h1>
+      </div>
+      <div className="bg-twohas p-6 rounded-lg shadow-lg w-full max-w-md -mt-14 relative z-20">
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
             <label
               htmlFor="number"
-              className="block text-gray-700 font-semibold mb-2"
+              className="block text-white font-semibold mb-2"
             >
               Name
             </label>
@@ -39,13 +50,13 @@ export default function Loginbox() {
               id="name"
               placeholder="Enter Name"
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
             />
           </div>
           <div>
             <label
               htmlFor="password"
-              className="block text-gray-700 font-semibold mb-2"
+              className="block text-white font-semibold mb-2"
             >
               Password
             </label>
@@ -55,17 +66,31 @@ export default function Loginbox() {
               id="password"
               placeholder="Enter Password"
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-twohas text-white font-bold py-2 rounded-md transition"
+            className="w-full bg-white text-twohas font-bold py-3 rounded-md transition border-2 hover:bg-twohas hover:text-white hover:border-white"
           >
             Login
           </button>
+          {buttonActivate && (
+            <button
+              onClick={() => setIsOpen(true)}
+              type="button"
+              className="w-full bg-white text-twohas font-bold py-3 rounded-md transition border-2 hover:bg-twohas hover:text-white hover:border-white"
+            >
+              Sign up
+            </button>
+          )}
         </form>
       </div>
+      <SignUpModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        onSuccess={() => setButtonActivate(false)}
+      />
     </div>
   );
 }
