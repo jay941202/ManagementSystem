@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import API from "../API/api";
 import SignUpModal from "./signUpModal";
 import logo from "../Assets/logo.png";
+import { useUser } from "../context/usercontext";
 
 export default function Loginbox() {
+  const { setRole } = useUser();
   const [form, setForm] = useState({ name: "", password: "" });
   const [isOpen, setIsOpen] = useState(false);
   const [buttonActivate, setButtonActivate] = useState(true);
@@ -19,6 +21,12 @@ export default function Loginbox() {
       const res = await API.post("/user/login", form);
       localStorage.setItem("token", res.data.token);
       alert(`로그인 성공`);
+
+      const role = await API.get("/user/role", {
+        headers: { Authorization: `Bearer ${res.data.token}` },
+      });
+
+      setRole(role.data.role);
     } catch (error) {
       alert(`로그인 실패 ${error}`);
     }
@@ -72,6 +80,7 @@ export default function Loginbox() {
           <button
             type="submit"
             className="w-full bg-white text-twohas font-bold py-3 rounded-md transition border-2 hover:bg-twohas hover:text-white hover:border-white"
+            disabled={!form.name || !form.password}
           >
             Login
           </button>
