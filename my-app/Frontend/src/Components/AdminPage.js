@@ -1,58 +1,61 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import background from "../Assets/background2.png";
 
 export default function AdminPage() {
   return (
-    <div className="flex h-screen text-white">
-      {/* 사이드바 */}
-      <aside className="w-64 bg-twohas p-6 flex flex-col">
-        <h2 className="text-3xl font-bold mb-8 select-none">Admin Panel</h2>
-        <nav className="flex flex-col space-y-4 text-lg font-semibold">
+    <div className="flex flex-col min-h-screen bg-white text-black">
+      <header className="bg-twohas text-white px-6 py-4 shadow-md flex justify-between items-center">
+        <h1 className="text-2xl font-bold select-none">Admin Panel</h1>
+        <img
+          src={background}
+          alt="Background Logo"
+          className="absolute inset-0 w-full h-full object-contain opacity-5 pointer-events-none select-none z-0"
+        />
+        <nav className="flex gap-6 text-lg font-semibold">
           <NavLink
-            to="dashboard"
+            to="Employee"
             className={({ isActive }) =>
-              `rounded px-3 py-2 transition ${
-                isActive ? "bg-[#34495e]" : "hover:bg-[#34495e]"
+              `transition ${
+                isActive ? "border-b-2 border-white" : "hover:text-gray-300"
               }`
             }
           >
-            Dashboard
+            Employee
           </NavLink>
           <NavLink
-            to="users"
+            to="Schedule"
             className={({ isActive }) =>
-              `rounded px-3 py-2 transition ${
-                isActive ? "bg-[#34495e]" : "hover:bg-[#34495e]"
+              `transition ${
+                isActive ? "border-b-2 border-white" : "hover:text-gray-300"
               }`
             }
           >
-            Users
+            Schedule
           </NavLink>
           <NavLink
-            to="settings"
+            to="CPA"
             className={({ isActive }) =>
-              `rounded px-3 py-2 transition ${
-                isActive ? "bg-[#34495e]" : "hover:bg-[#34495e]"
+              `transition ${
+                isActive ? "border-b-2 border-white" : "hover:text-gray-300"
               }`
             }
           >
-            Settings
+            CPA
           </NavLink>
           <NavLink
-            to="logs"
+            to="Tip"
             className={({ isActive }) =>
-              `rounded px-3 py-2 transition ${
-                isActive ? "bg-[#34495e]" : "hover:bg-[#34495e]"
+              `transition ${
+                isActive ? "border-b-2 border-white" : "hover:text-gray-300"
               }`
             }
           >
-            Logs
+            Tip
           </NavLink>
         </nav>
-      </aside>
-
-      {/* 메인 컨텐츠 영역 */}
-      <main className="flex-1 p-8 overflow-auto bg-white">
+      </header>
+      <main className="flex-1 p-8 overflow-auto z-15">
         <Outlet />
       </main>
     </div>

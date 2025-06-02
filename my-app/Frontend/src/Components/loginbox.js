@@ -5,7 +5,7 @@ import logo from "../Assets/logo.png";
 import { useUser } from "../context/usercontext";
 
 export default function Loginbox() {
-  const { setRole } = useUser();
+  const { setRole, setUser } = useUser();
   const [form, setForm] = useState({ name: "", password: "" });
   const [isOpen, setIsOpen] = useState(false);
   const [buttonActivate, setButtonActivate] = useState(true);
@@ -25,7 +25,7 @@ export default function Loginbox() {
       const role = await API.get("/user/role", {
         headers: { Authorization: `Bearer ${res.data.token}` },
       });
-
+      setUser(role.data.name);
       setRole(role.data.role);
     } catch (error) {
       alert(`로그인 실패 ${error}`);
