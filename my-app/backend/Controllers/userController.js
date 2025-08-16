@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 
 const createToken = (user) => {
   return jwt.sign({ id: user.id, username: user.name }, JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "24h",
   });
 };
 exports.register = async (req, res) => {

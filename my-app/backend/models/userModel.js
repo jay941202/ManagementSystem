@@ -8,9 +8,9 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     number: {
-      type: Number,
+      type: String,
       required: true,
-      default: 0,
+      default: "",
     },
     password: {
       type: String,
@@ -27,6 +27,21 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: 10,
     },
+    Active: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    TipPercentage: {
+      type: Number,
+      required: true,
+      default: 0.1,
+    },
+    StartDate: {
+      type: Date,
+      required: true,
+      default: Date.now,
+    },
   },
   {
     timestamps: true,
@@ -34,13 +49,12 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
-    return next();
-  }
+  if (!this.isModified("password")) return next();
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
+
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
