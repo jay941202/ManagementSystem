@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ScheduleCell from "./Scedule Components/ScheduleCell";
+import API from "../../API/api";
 
 export default function Schedule() {
   const today = new Date();
@@ -39,7 +40,7 @@ export default function Schedule() {
     });
   };
 
-  const handleConfirm = (dateStr, shift) => {
+  const handleConfirm = async (dateStr, shift) => {
     setSchedule((prev) => {
       const dayData = prev[dateStr] || {};
       const shiftData = dayData[shift] || { employees: [] };
@@ -55,6 +56,28 @@ export default function Schedule() {
         },
       };
     });
+
+    try {
+      const token = localStorage.getItem("token");
+      const selectedEmployees = schedule[dateStr]?.[shift]?.employees || [];
+      const formattedEmployees = selectedEmployees.map((emp) => ({
+        employee: emp._id,
+        clockIn: null,
+        clockOut: null,
+      }));
+
+      await API.post(
+        "/schedule/confirm",
+        {
+          date: dateStr,
+          shift,
+          employees: formattedEmployees,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (err) {
+      console.error("Schedule confirm failed:", err);
+    }
   };
 
   return (

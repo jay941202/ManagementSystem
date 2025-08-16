@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MultiSelectDropdown from "./MultiSelectDropdown";
+import API from "../../../API/api";
 
 export default function ScheduleCell({
   dateStr,
@@ -7,6 +8,23 @@ export default function ScheduleCell({
   handleChange,
   handleConfirm,
 }) {
+  const [employeesList, setEmployeesList] = useState([]);
+  const fetchEmployee = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await API.get("/employee/employeeList", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setEmployeesList(res.data);
+    } catch (error) {
+      console.error("Failed", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchEmployee();
+  }, []);
+
   return (
     <div className="h-64 min-w-[120px] border border-gray-500 rounded-xl bg-white shadow-lg flex flex-col justify-between hover:shadow-xl transition-shadow">
       <div className="px-3 pt-1 text-right text-s font-bold text-red-500 h-6 select-none">
@@ -32,15 +50,7 @@ export default function ScheduleCell({
             </div>
 
             <MultiSelectDropdown
-              options={[
-                "홍길동",
-                "김민수",
-                "최유진",
-                "박서준",
-                "이서윤",
-                "강민재",
-                "조민호",
-              ]}
+              options={employeesList}
               selected={shiftData.employees}
               onChange={(selected) => handleChange(dateStr, shift, selected)}
               disabled={isConfirmed}

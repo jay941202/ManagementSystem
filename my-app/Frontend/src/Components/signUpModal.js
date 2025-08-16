@@ -43,13 +43,6 @@ export default function SignUpModal({ isOpen, onClose, onSuccess }) {
             className="w-full px-3 py-2 border-2 rounded"
           />
           <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            onChange={handleChange}
-            className="w-full px-3 py-2 border-2 rounded"
-          />
-          <input
             name="number"
             type="number"
             placeholder="Phone Number"

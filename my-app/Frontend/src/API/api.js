@@ -12,7 +12,19 @@ API.interceptors.request.use(
     }
     return config;
   },
+  (error) => Promise.reject(error)
+);
+
+API.interceptors.response.use(
+  (response) => response,
   (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+      alert("Your session has expired. Please login again.");
+    }
     return Promise.reject(error);
   }
 );
