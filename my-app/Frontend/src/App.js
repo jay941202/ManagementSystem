@@ -21,8 +21,8 @@ function App() {
             <Route index element={<Employee />} />
             <Route path="Employee" element={<Employee />} />
             <Route path="Schedule" element={<Schedule />} />
-            <Route path="Cpa" element={<CPA />} />
             <Route path="Tip" element={<Tip />} />
+            <Route path="Cpa" element={<CPA />} />
           </Route>
         ) : (
           <Route path="user" element={<UserPage />} />

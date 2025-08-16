@@ -34,16 +34,6 @@ export default function AdminPage() {
             Schedule
           </NavLink>
           <NavLink
-            to="CPA"
-            className={({ isActive }) =>
-              `transition ${
-                isActive ? "border-b-2 border-white" : "hover:text-gray-300"
-              }`
-            }
-          >
-            CPA
-          </NavLink>
-          <NavLink
             to="Tip"
             className={({ isActive }) =>
               `transition ${
@@ -52,6 +42,16 @@ export default function AdminPage() {
             }
           >
             Tip
+          </NavLink>
+          <NavLink
+            to="CPA"
+            className={({ isActive }) =>
+              `transition ${
+                isActive ? "border-b-2 border-white" : "hover:text-gray-300"
+              }`
+            }
+          >
+            CPA
           </NavLink>
         </nav>
       </header>

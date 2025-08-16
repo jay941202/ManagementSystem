@@ -25,12 +25,18 @@ export default function Loginbox() {
       const role = await API.get("/user/role", {
         headers: { Authorization: `Bearer ${res.data.token}` },
       });
+
       setUser(role.data.name);
       setRole(role.data.role);
+
+      // 여기에 추가
+      localStorage.setItem("role", role.data.role);
+      localStorage.setItem("user", JSON.stringify({ name: role.data.name }));
     } catch (error) {
       alert(`로그인 실패 ${error}`);
     }
   };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
       <div className="relative w-full max-w-4xl h-48 md:h-64 mb-20 mx-auto">

@@ -1,52 +1,88 @@
-import React from "react";
+import React, { useState } from "react";
+import ScheduleCell from "./Scedule Components/ScheduleCell";
 
 export default function Schedule() {
   const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth(); // 0-indexed (0 = January)
+  const todayDay = today.getDay();
+  const diffToMonday = todayDay === 0 ? -6 : 1 - todayDay;
 
-  // 1일이 무슨 요일인지
-  const firstDay = new Date(year, month, 1).getDay();
+  const startDateObj = new Date(today);
+  startDateObj.setDate(today.getDate() + diffToMonday + 7);
 
-  // 해당 월의 마지막 날
-  const lastDate = new Date(year, month + 2, 0).getDate();
-
-  // 날짜 배열 만들기
-  const calendarDays = [];
-  for (let i = 0; i < firstDay; i++) {
-    calendarDays.push(null); // 빈칸 채우기
+  const printedDays = [];
+  for (let i = 0; i < 14; i++) {
+    const date = new Date(startDateObj);
+    date.setDate(startDateObj.getDate() + i);
+    printedDays.push({
+      dateObj: date,
+    });
   }
-  for (let i = 1; i <= lastDate; i++) {
-    calendarDays.push(i);
-  }
+
+  const [schedule, setSchedule] = useState({});
+
+  const handleChange = (dateStr, shift, selectedEmployees) => {
+    setSchedule((prev) => {
+      const dayData = prev[dateStr] || {
+        AM: { employees: [], confirmed: false },
+        PM: { employees: [], confirmed: false },
+      };
+      return {
+        ...prev,
+        [dateStr]: {
+          ...dayData,
+          [shift]: {
+            ...dayData[shift],
+            employees: selectedEmployees,
+          },
+        },
+      };
+    });
+  };
+
+  const handleConfirm = (dateStr, shift) => {
+    setSchedule((prev) => {
+      const dayData = prev[dateStr] || {};
+      const shiftData = dayData[shift] || { employees: [] };
+
+      return {
+        ...prev,
+        [dateStr]: {
+          ...dayData,
+          [shift]: {
+            ...shiftData,
+            confirmed: true,
+          },
+        },
+      };
+    });
+  };
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-2">
-        {year}년 {month + 1}월
-      </h2>
-
-      {/* 요일 */}
-      <div className="grid grid-cols-7 font-bold text-center gap-2 text-gray-600 mb-2">
-        <div className="border-2 border-twohas">Sun</div>
-        <div className="border-2 border-twohas">Mon</div>
-        <div className="border-2 border-twohas">Tue</div>
-        <div className="border-2 border-twohas">Wed</div>
-        <div className="border-2 border-twohas">Thu</div>
-        <div className="border-2 border-twohas">Fri</div>
-        <div className="border-2 border-twohas">Sat</div>
-      </div>
-
-      {/* 날짜 */}
-      <div className="grid grid-cols-7 text-center gap-2">
-        {calendarDays.map((day, index) => (
-          <div
-            key={index}
-            className="border-2 border-twohas h-32 flex bg-white hover:bg-gray-100"
-          >
-            {day || ""}
+    <div className="p-6 max-w-7xl mx-auto">
+      <h2 className="text-3xl font-bold mb-6 text-center">Scheduler</h2>
+      <div className="grid grid-cols-7 gap-4 text-center text-sm font-bold text-gray-1000 mb-4">
+        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
+          <div key={d} className="py-3 bg-gray-100 rounded-md shadow-sm">
+            {d}
           </div>
         ))}
+      </div>
+
+      <div className="grid grid-cols-7 gap-4 text-sm">
+        {printedDays.map(({ dateObj }, index) => {
+          const dateStr = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
+          const dayData = schedule[dateStr] || {};
+
+          return (
+            <ScheduleCell
+              key={index}
+              dateStr={dateStr}
+              dayData={dayData}
+              handleChange={handleChange}
+              handleConfirm={handleConfirm}
+            />
+          );
+        })}
       </div>
     </div>
   );
