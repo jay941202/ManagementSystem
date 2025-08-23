@@ -20,9 +20,13 @@ const shiftSchema = new mongoose.Schema({
   employees: [employeeShiftSchema],
   tipTotal: {
     type: Number,
-    default: 0,
+    default: null,
   },
-  confirmed: {
+  scheduleConfirmed: {
+    type: Boolean,
+    default: false,
+  },
+  tipConfirmed: {
     type: Boolean,
     default: false,
   },

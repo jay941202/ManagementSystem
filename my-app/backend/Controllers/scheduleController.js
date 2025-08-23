@@ -4,20 +4,16 @@ exports.confirmShift = async (req, res) => {
   try {
     const { date, shift, employees } = req.body;
 
-    const isoDate = new Date(date);
-
-    let schedule = await Schedule.findOne({ date: isoDate });
+    let schedule = await Schedule.findOne({ date });
     if (!schedule) {
-      schedule = new Schedule({ date: isoDate });
+      schedule = new Schedule({ date });
     }
-
-    // 기존 shift 데이터가 있으면 가져오고 없으면 빈 객체로
     const existingShift = schedule[shift] || {};
 
     schedule[shift] = {
       ...existingShift,
       employees,
-      confirmed: true,
+      scheduleConfirmed: true,
     };
 
     await schedule.save();
@@ -25,5 +21,50 @@ exports.confirmShift = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to confirm shift" });
+  }
+};
+exports.getScheduleList = async (req, res) => {
+  try {
+    const schedules = await Schedule.find()
+      .populate("AM.employees.employee", "name")
+      .populate("PM.employees.employee", "name");
+
+    res.json(schedules);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch schedules" });
+  }
+};
+exports.getTipList = async (req, res) => {
+  try {
+    const schedules = await Schedule.find();
+    res.json(schedules);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch schedules" });
+  }
+};
+exports.confirmTip = async (req, res) => {
+  try {
+    const { date, shift, tipTotal } = req.body;
+
+    let schedule = await Schedule.findOne({ date });
+    if (!schedule) {
+      schedule = new Schedule({ date });
+    }
+
+    const existingShift = schedule[shift] || {};
+    schedule[shift] = {
+      ...existingShift,
+      tipTotal,
+      tipConfirmed: true,
+      employees: existingShift.employees || [],
+    };
+
+    await schedule.save();
+    res.json(schedule);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to confirm tip" });
   }
 };

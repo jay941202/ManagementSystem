@@ -7,8 +7,10 @@ export default function ScheduleCell({
   dayData,
   handleChange,
   handleConfirm,
+  handleEdit,
 }) {
   const [employeesList, setEmployeesList] = useState([]);
+
   const fetchEmployee = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -30,13 +32,12 @@ export default function ScheduleCell({
       <div className="px-3 pt-1 text-right text-s font-bold text-red-500 h-6 select-none">
         {dateStr}
       </div>
-
       {["AM", "PM"].map((shift) => {
         const shiftData = dayData[shift] || {
           employees: [],
-          confirmed: false,
+          scheduleConfirmed: false,
         };
-        const isConfirmed = shiftData.confirmed;
+        const isConfirmed = shiftData.scheduleConfirmed;
 
         return (
           <div
@@ -48,20 +49,24 @@ export default function ScheduleCell({
             <div className="text-xs font-semibold select-none">
               {shift === "AM" ? "Morning" : "Night"}
             </div>
-
             <MultiSelectDropdown
               options={employeesList}
               selected={shiftData.employees}
               onChange={(selected) => handleChange(dateStr, shift, selected)}
               disabled={isConfirmed}
             />
-
-            {!isConfirmed && (
+            {isConfirmed ? (
+              <button
+                onClick={() => handleEdit(dateStr, shift)}
+                className="mt-1 text-xs rounded px-3 py-1 bg-white text-twohas hover:brightness-110"
+              >
+                Edit
+              </button>
+            ) : (
               <button
                 onClick={() => handleConfirm(dateStr, shift)}
                 disabled={shiftData.employees.length === 0}
-                className={`mt-1 text-xs rounded px-3 py-1 transition 
-                ${
+                className={`mt-1 text-xs rounded px-3 py-1 ${
                   shiftData.employees.length === 0
                     ? "bg-gray-300 text-gray-600 cursor-not-allowed"
                     : "bg-twohas text-white hover:brightness-110"
