@@ -37,6 +37,7 @@ exports.updateEmployee = async (req, res) => {
       TipPercentage,
       Active,
       StartDate,
+      taxReport,
     } = req.body;
 
     if (!id)
@@ -50,12 +51,11 @@ exports.updateEmployee = async (req, res) => {
     if (TipPercentage !== undefined) updateFields.TipPercentage = TipPercentage;
     if (Active !== undefined) updateFields.Active = Active;
     if (StartDate !== undefined) updateFields.StartDate = StartDate;
+    if (taxReport !== undefined) updateFields.taxReport = taxReport;
 
-    const updatedEmployee = await User.findByIdAndUpdate(
-      id,
-      updateFields,
-      { new: true } // omitUndefined 없어도 updateFields에 undefined 없음
-    );
+    const updatedEmployee = await User.findByIdAndUpdate(id, updateFields, {
+      new: true,
+    });
 
     if (!updatedEmployee)
       return res.status(404).json({ message: "Employee not found" });
@@ -78,10 +78,13 @@ exports.addEmployee = async (req, res) => {
       Active,
       StartDate,
       password,
+      taxReport,
     } = req.body;
 
-    if (!name || !number) {
-      return res.status(400).json({ message: "Name and number are required" });
+    if (!name || !number || !taxReport) {
+      return res
+        .status(400)
+        .json({ message: "Name, number, and taxReport are required" });
     }
 
     const tempPassword = password || String(number);
@@ -96,10 +99,10 @@ exports.addEmployee = async (req, res) => {
         Active !== undefined ? Active === true || Active === "true" : true,
       StartDate: StartDate ? new Date(StartDate) : new Date(),
       password: tempPassword,
+      taxReport,
     });
 
     const { password: _, ...employeeData } = newEmployee.toObject();
-
     res.status(201).json(employeeData);
   } catch (error) {
     console.error("Error adding employee:", error);

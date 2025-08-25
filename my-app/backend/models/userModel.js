@@ -42,6 +42,12 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: Date.now,
     },
+    taxReport: {
+      type: String,
+      required: true,
+      default: "W-2",
+      enum: ["1099", "W-2"],
+    },
   },
   {
     timestamps: true,

@@ -8,12 +8,12 @@ export default function Employee() {
   const today = new Date().toISOString().split("T")[0];
   const [newEmployee, setNewEmployee] = useState({
     name: "",
-    role: "",
     hourlyPay: "",
     number: "",
     TipPercentage: "",
-    Active: "true",
-    StartDate: today, // 오늘 날짜로 초기화
+    Active: true,
+    StartDate: today,
+    taxReport: "",
   });
 
   const fetchEmployee = async () => {
@@ -32,19 +32,6 @@ export default function Employee() {
     fetchEmployee();
   }, []);
 
-  const onClickHandler = async (id) => {
-    try {
-      const token = localStorage.getItem("token");
-      await API.delete("/employee/deleteEmployee", {
-        headers: { Authorization: `Bearer ${token}` },
-        data: { id },
-      });
-      await fetchEmployee();
-    } catch (error) {
-      console.error("Failed", error);
-    }
-  };
-
   const handleEdit = (emp) => {
     setEditingId(emp._id);
     setEditedEmployee(emp);
@@ -58,11 +45,9 @@ export default function Employee() {
     try {
       const token = localStorage.getItem("token");
       const payload = { ...editedEmployee, id: editedEmployee._id };
-
       await API.put("/employee/updateEmployee", payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       setEditingId(null);
       await fetchEmployee();
     } catch (error) {
@@ -78,13 +63,14 @@ export default function Employee() {
       });
       setNewEmployee({
         name: "",
-        role: "",
         hourlyPay: "",
         number: "",
         TipPercentage: "",
-        Active: "",
-        StartDate: "",
+        Active: true,
+        StartDate: today,
+        taxReport: "",
       });
+      console.log(newEmployee);
       await fetchEmployee();
     } catch (error) {
       console.error("Failed to add", error);
@@ -99,8 +85,8 @@ export default function Employee() {
           onClick={handleAddEmployee}
           disabled={
             !newEmployee.name.trim() ||
-            !newEmployee.role.trim() ||
             !newEmployee.number.trim() ||
+            !newEmployee.taxReport ||
             newEmployee.hourlyPay <= 0
           }
           className="bg-twohas hover:bg-gray-600 text-white px-4 py-2 rounded shadow"
@@ -116,15 +102,6 @@ export default function Employee() {
           value={newEmployee.name}
           onChange={(e) =>
             setNewEmployee({ ...newEmployee, name: e.target.value })
-          }
-          className="border px-3 py-2 rounded w-full"
-        />
-        <input
-          type="text"
-          placeholder="Role"
-          value={newEmployee.role}
-          onChange={(e) =>
-            setNewEmployee({ ...newEmployee, role: e.target.value })
           }
           className="border px-3 py-2 rounded w-full"
         />
@@ -153,15 +130,33 @@ export default function Employee() {
         <input
           type="number"
           placeholder="Tip %"
-          value={newEmployee.TipPercentage * 100 || ""}
+          value={
+            newEmployee.TipPercentage === ""
+              ? ""
+              : newEmployee.TipPercentage * 100
+          }
           onChange={(e) =>
             setNewEmployee({
               ...newEmployee,
-              TipPercentage: parseFloat(e.target.value) / 100,
+              TipPercentage:
+                e.target.value === "" ? "" : parseFloat(e.target.value) / 100,
             })
           }
           className="border px-3 py-2 rounded w-full"
         />
+        <select
+          value={newEmployee.taxReport}
+          onChange={(e) =>
+            setNewEmployee({ ...newEmployee, taxReport: e.target.value })
+          }
+          className={`border px-3 py-2 rounded w-full ${
+            !newEmployee.taxReport ? "text-gray-400" : "text-black"
+          }`}
+        >
+          <option value="">Select Tax Report</option>
+          <option value="1099">1099</option>
+          <option value="W-2">W-2</option>
+        </select>
       </div>
 
       <div className="overflow-x-auto rounded-xl shadow-lg">
@@ -170,7 +165,7 @@ export default function Employee() {
             <tr>
               <th className="px-4 py-2 text-left w-8">#</th>
               <th className="px-4 py-2 text-left w-32">Name</th>
-              <th className="px-4 py-2 text-left w-28">Role</th>
+              <th className="px-4 py-2 text-left w-28">Tax Report</th>
               <th className="px-4 py-2 text-left w-24">Hourly Pay</th>
               <th className="px-4 py-2 text-left w-28">Phone</th>
               <th className="px-4 py-2 text-left w-28">StartDate</th>
@@ -196,27 +191,41 @@ export default function Employee() {
                 </td>
                 <td className="px-4 py-2">
                   {editingId === emp._id ? (
-                    <input
-                      value={editedEmployee.role || ""}
-                      onChange={(e) => handleChange("role", e.target.value)}
+                    <select
+                      value={editedEmployee.taxReport || ""}
+                      onChange={(e) =>
+                        handleChange("taxReport", e.target.value)
+                      }
                       className="border rounded px-2 py-1 w-full"
-                    />
+                    >
+                      <option value="">Select Tax Report</option>
+                      <option value="1099">1099</option>
+                      <option value="W-2">W-2</option>
+                    </select>
                   ) : (
-                    emp.role
+                    emp.taxReport
                   )}
                 </td>
                 <td className="px-4 py-2">
                   {editingId === emp._id ? (
                     <input
                       type="number"
-                      value={editedEmployee.hourlyPay || 0}
-                      onChange={(e) =>
-                        handleChange("hourlyPay", parseFloat(e.target.value))
+                      value={
+                        editedEmployee.hourlyPay === ""
+                          ? ""
+                          : editedEmployee.hourlyPay
                       }
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        handleChange(
+                          "hourlyPay",
+                          val === "" ? "" : parseFloat(val)
+                        );
+                      }}
                       className="border rounded px-2 py-1 w-full"
                     />
                   ) : (
-                    `$${emp.hourlyPay.toFixed(2)}`
+                    `$${(emp.hourlyPay ?? 0).toFixed(2)}`
                   )}
                 </td>
                 <td className="px-4 py-2">
@@ -241,27 +250,32 @@ export default function Employee() {
                       className="border rounded px-2 py-1 w-full"
                     />
                   ) : emp.StartDate ? (
-                    new Date(emp.StartDate).toLocaleDateString() // 날짜 포맷
+                    new Date(emp.StartDate).toLocaleDateString()
                   ) : (
                     ""
                   )}
                 </td>
-
                 <td className="px-4 py-2">
                   {editingId === emp._id ? (
                     <input
                       type="number"
-                      value={editedEmployee.TipPercentage || 0}
-                      onChange={(e) =>
+                      value={
+                        editedEmployee.TipPercentage === ""
+                          ? ""
+                          : editedEmployee.TipPercentage * 100
+                      }
+                      onChange={(e) => {
+                        const val = e.target.value;
                         handleChange(
                           "TipPercentage",
-                          parseFloat(e.target.value)
-                        )
-                      }
+                          val === "" ? "" : parseFloat(val) / 100
+                        );
+                      }}
                       className="border rounded px-2 py-1 w-full"
                     />
-                  ) : emp.TipPercentage !== undefined ? (
-                    `${emp.TipPercentage * 100}%` // 1 → 100%로 변환
+                  ) : emp.TipPercentage !== undefined &&
+                    emp.TipPercentage !== "" ? (
+                    `${emp.TipPercentage * 100}%`
                   ) : (
                     ""
                   )}
@@ -311,12 +325,6 @@ export default function Employee() {
                         className="bg-twohas hover:bg-gray-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm transition"
                       >
                         Edit
-                      </button>
-                      <button
-                        onClick={() => onClickHandler(emp._id)}
-                        className="bg-twohas hover:bg-gray-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm transition"
-                      >
-                        Delete
                       </button>
                     </>
                   )}

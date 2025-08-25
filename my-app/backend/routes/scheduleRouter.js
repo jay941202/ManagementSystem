@@ -6,5 +6,5 @@ const authMiddleware = require("../middleware/userMiddleware");
 router.post("/confirm", authMiddleware, scheduleController.confirmShift);
 router.get("/list", authMiddleware, scheduleController.getScheduleList);
 router.post("/confirmTip", authMiddleware, scheduleController.confirmTip);
-router.get("/tipList", authMiddleware, scheduleController.getTipList);
+router.get("/tipList", authMiddleware, scheduleController.getScheduleList);
 module.exports = router;

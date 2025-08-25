@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import TipCell from "../TipSubPages/TipCell";
+import TipCell from "./TipSubPages/TipCell";
 import API from "../../API/api";
 
 export default function Tip() {

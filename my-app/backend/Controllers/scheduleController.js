@@ -26,18 +26,9 @@ exports.confirmShift = async (req, res) => {
 exports.getScheduleList = async (req, res) => {
   try {
     const schedules = await Schedule.find()
-      .populate("AM.employees.employee", "name")
-      .populate("PM.employees.employee", "name");
+      .populate("AM.employees.employee", "name TipPercentage Active")
+      .populate("PM.employees.employee", "name TipPercentage Active");
 
-    res.json(schedules);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch schedules" });
-  }
-};
-exports.getTipList = async (req, res) => {
-  try {
-    const schedules = await Schedule.find();
     res.json(schedules);
   } catch (err) {
     console.error(err);

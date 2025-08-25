@@ -17,7 +17,8 @@ export default function ScheduleCell({
       const res = await API.get("/employee/employeeList", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setEmployeesList(res.data);
+      const activeEmployees = res.data.filter((emp) => emp.Active);
+      setEmployeesList(activeEmployees);
     } catch (error) {
       console.error("Failed", error);
     }
