@@ -1,6 +1,11 @@
 import React, { useState } from "react";
+import API from "../../API/api";
 
-export default function InventoryTable({ inventoryList, calcUnitPrice }) {
+export default function InventoryTable({
+  inventoryList,
+  calcUnitPrice,
+  fetchInventory,
+}) {
   const [editingId, setEditingId] = useState(null);
   const [editedInventory, setEditedInventory] = useState(null);
 
@@ -11,6 +16,31 @@ export default function InventoryTable({ inventoryList, calcUnitPrice }) {
 
   const handleChange = (field, value) => {
     setEditedInventory({ ...editedInventory, [field]: value });
+  };
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const payload = { ...editedInventory, id: editedInventory._id };
+      await API.put("inventory/updateInventory", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setEditingId(null);
+      await fetchInventory();
+    } catch (error) {
+      console.error("Failed to Upload", error);
+    }
+  };
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      await API.delete("inventory/deleteInventory", {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { id },
+      });
+      await fetchInventory();
+    } catch (error) {
+      console.error("Failed to Upload", error);
+    }
   };
 
   return (
@@ -68,15 +98,28 @@ export default function InventoryTable({ inventoryList, calcUnitPrice }) {
                 </td>
                 <td className="px-4 py-2">
                   {editingId === item._id ? (
-                    <input
+                    <select
                       value={editedInventory?.vendor || ""}
                       onChange={(e) => handleChange("vendor", e.target.value)}
-                      className="border rounded px-2 py-1 w-full"
-                    />
+                      className="border rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                    >
+                      <option value="">Select Vendor</option>
+                      <option value="Costco">Costco</option>
+                      <option value="Sams">Sams</option>
+                      <option value="Namdaemun">Namdaemun</option>
+                      <option value="Metrochef">Metrochef</option>
+                      <option value="Hmart">Hmart</option>
+                      <option value="Sysco">Sysco</option>
+                      <option value="Restaurantdepot">Restaurantdepot</option>
+                      <option value="Aldi">Aldi</option>
+                      <option value="Kroger">Kroger</option>
+                      <option value="Walmart">Walmart</option>
+                    </select>
                   ) : (
                     item.vendor
                   )}
                 </td>
+
                 <td className="px-4 py-2">
                   {editingId === item._id ? (
                     <input
@@ -118,7 +161,10 @@ export default function InventoryTable({ inventoryList, calcUnitPrice }) {
                 <td className="px-4 py-2 flex justify-center gap-2">
                   {editingId === item._id ? (
                     <>
-                      <button className="bg-green-500 hover:bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm transition">
+                      <button
+                        onClick={handleSave}
+                        className="bg-green-500 hover:bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm transition"
+                      >
                         Save
                       </button>
                       <button
@@ -137,7 +183,7 @@ export default function InventoryTable({ inventoryList, calcUnitPrice }) {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleEdit(item)}
+                        onClick={() => handleDelete(item._id)}
                         className="bg-twohas hover:bg-gray-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm transition"
                       >
                         Delete

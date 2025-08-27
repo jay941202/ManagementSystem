@@ -48,15 +48,25 @@ export default function InventoryForm({
             <label className="block text-sm font-medium text-gray-600 mb-1">
               Vendor
             </label>
-            <input
-              type="text"
-              placeholder="Ex: Costco"
+            <select
               value={newInventory.vendor}
               onChange={(e) =>
                 setNewInventory({ ...newInventory, vendor: e.target.value })
               }
-              className="border px-3 py-2 rounded w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            />
+              className="border text-gray-600 px-3 py-2 rounded w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            >
+              <option value="">Select Vendor</option>
+              <option value="Costco">Costco</option>
+              <option value="Sams">Sams</option>
+              <option value="Namdaemun">Namdaemun</option>
+              <option value="Metrochef">Metrochef</option>
+              <option value="Hmart">Hmart</option>
+              <option value="Sysco">Sysco</option>
+              <option value="Restaurantdepot">Restaurantdepot</option>
+              <option value="Aldi">Aldi</option>
+              <option value="Kroger">Kroger</option>
+              <option value="Walmart">Walmart</option>
+            </select>
           </div>
 
           <div>
@@ -64,8 +74,8 @@ export default function InventoryForm({
               Volume / Pack
             </label>
             <input
-              type="text"
-              placeholder="Ex: 24 cans"
+              type="number"
+              placeholder="Ex: 24"
               value={newInventory.volume}
               onChange={(e) =>
                 setNewInventory({ ...newInventory, volume: e.target.value })

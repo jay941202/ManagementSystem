@@ -12,6 +12,7 @@ export default function Inventory() {
     inStock: "",
   });
   const [inventoryList, setInventoryList] = useState([]);
+
   useEffect(() => {
     fetchInventory();
   }, []);
@@ -23,6 +24,7 @@ export default function Inventory() {
     const qty = parseInt(match[0], 10);
     return `$${(price / qty).toFixed(2)}`;
   };
+
   const fetchInventory = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -63,6 +65,14 @@ export default function Inventory() {
       console.error("Failed to add", error);
     }
   };
+
+  const groupedByVendor = inventoryList.reduce((acc, item) => {
+    if (!acc[item.vendor]) acc[item.vendor] = [];
+    acc[item.vendor].push(item);
+    return acc;
+  }, {});
+  console.log(groupedByVendor);
+
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-10 bg-gray-50 min-h-screen">
       <InventoryForm
@@ -70,10 +80,17 @@ export default function Inventory() {
         setNewInventory={setNewInventory}
         handleAddInventory={handleAddInventory}
       />
-      <InventoryTable
-        inventoryList={inventoryList}
-        calcUnitPrice={calcUnitPrice}
-      />
+
+      {Object.entries(groupedByVendor).map(([vendor, items]) => (
+        <div key={vendor}>
+          <h2 className="text-2xl font-bold mb-4">{vendor}</h2>
+          <InventoryTable
+            inventoryList={items}
+            calcUnitPrice={calcUnitPrice}
+            fetchInventory={fetchInventory}
+          />
+        </div>
+      ))}
     </div>
   );
 }
