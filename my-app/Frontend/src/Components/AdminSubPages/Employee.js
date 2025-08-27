@@ -15,7 +15,10 @@ export default function Employee() {
     StartDate: today,
     taxReport: "",
   });
-
+  const [active, setActive] = useState();
+  const activeHandler = () => {
+    setActive((prev) => !prev);
+  };
   const fetchEmployee = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -127,9 +130,7 @@ export default function Employee() {
           }
           className="border px-3 py-2 rounded w-full"
         />
-        <input
-          type="number"
-          placeholder="Tip %"
+        <select
           value={
             newEmployee.TipPercentage === ""
               ? ""
@@ -142,8 +143,15 @@ export default function Employee() {
                 e.target.value === "" ? "" : parseFloat(e.target.value) / 100,
             })
           }
-          className="border px-3 py-2 rounded w-full"
-        />
+          className={`border px-3 py-2 rounded w-full ${
+            !newEmployee.TipPercentage ? "text-gray-400" : "text-black"
+          }`}
+        >
+          <option value="">Select Tip Percentage</option>
+          <option value="50">50%</option>
+          <option value="70">70%</option>
+          <option value="100">100%</option>
+        </select>
         <select
           value={newEmployee.taxReport}
           onChange={(e) =>
@@ -170,167 +178,179 @@ export default function Employee() {
               <th className="px-4 py-2 text-left w-28">Phone</th>
               <th className="px-4 py-2 text-left w-28">StartDate</th>
               <th className="px-4 py-2 text-left w-20">Tip%</th>
-              <th className="px-4 py-2 text-left w-20">Active</th>
+              <th
+                onClick={activeHandler}
+                className="px-4 py-2 text-left w-20 cursor-pointer hover:bg-gray-400"
+              >
+                Active
+              </th>
+
               <th className="px-4 py-2 text-center w-40">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 text-gray-700">
-            {employees.map((emp, index) => (
-              <tr key={emp._id} className="hover:bg-gray-200 transition">
-                <td className="px-4 py-2">{index + 1}</td>
-                <td className="px-4 py-2">
-                  {editingId === emp._id ? (
-                    <input
-                      value={editedEmployee.name || ""}
-                      onChange={(e) => handleChange("name", e.target.value)}
-                      className="border rounded px-2 py-1 w-full"
-                    />
-                  ) : (
-                    emp.name
-                  )}
-                </td>
-                <td className="px-4 py-2">
-                  {editingId === emp._id ? (
-                    <select
-                      value={editedEmployee.taxReport || ""}
-                      onChange={(e) =>
-                        handleChange("taxReport", e.target.value)
-                      }
-                      className="border rounded px-2 py-1 w-full"
-                    >
-                      <option value="">Select Tax Report</option>
-                      <option value="1099">1099</option>
-                      <option value="W-2">W-2</option>
-                    </select>
-                  ) : (
-                    emp.taxReport
-                  )}
-                </td>
-                <td className="px-4 py-2">
-                  {editingId === emp._id ? (
-                    <input
-                      type="number"
-                      value={
-                        editedEmployee.hourlyPay === ""
-                          ? ""
-                          : editedEmployee.hourlyPay
-                      }
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        handleChange(
-                          "hourlyPay",
-                          val === "" ? "" : parseFloat(val)
-                        );
-                      }}
-                      className="border rounded px-2 py-1 w-full"
-                    />
-                  ) : (
-                    `$${(emp.hourlyPay ?? 0).toFixed(2)}`
-                  )}
-                </td>
-                <td className="px-4 py-2">
-                  {editingId === emp._id ? (
-                    <input
-                      value={editedEmployee.number || ""}
-                      onChange={(e) => handleChange("number", e.target.value)}
-                      className="border rounded px-2 py-1 w-full"
-                    />
-                  ) : (
-                    emp.number
-                  )}
-                </td>
-                <td className="px-4 py-2">
-                  {editingId === emp._id ? (
-                    <input
-                      type="date"
-                      value={editedEmployee.StartDate || ""}
-                      onChange={(e) =>
-                        handleChange("StartDate", e.target.value)
-                      }
-                      className="border rounded px-2 py-1 w-full"
-                    />
-                  ) : emp.StartDate ? (
-                    new Date(emp.StartDate).toLocaleDateString()
-                  ) : (
-                    ""
-                  )}
-                </td>
-                <td className="px-4 py-2">
-                  {editingId === emp._id ? (
-                    <input
-                      type="number"
-                      value={
-                        editedEmployee.TipPercentage === ""
-                          ? ""
-                          : editedEmployee.TipPercentage * 100
-                      }
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        handleChange(
-                          "TipPercentage",
-                          val === "" ? "" : parseFloat(val) / 100
-                        );
-                      }}
-                      className="border rounded px-2 py-1 w-full"
-                    />
-                  ) : emp.TipPercentage !== undefined &&
-                    emp.TipPercentage !== "" ? (
-                    `${emp.TipPercentage * 100}%`
-                  ) : (
-                    ""
-                  )}
-                </td>
-                <td className="px-4 py-2">
-                  {editingId === emp._id ? (
-                    <select
-                      value={editedEmployee.Active ? "Yes" : "No"}
-                      onChange={(e) =>
-                        handleChange("Active", e.target.value === "Yes")
-                      }
-                      className="border rounded px-2 py-1 w-full"
-                    >
-                      <option value="Yes">Yes</option>
-                      <option value="No">No</option>
-                    </select>
-                  ) : emp.Active !== undefined ? (
-                    emp.Active ? (
-                      "Yes"
+            {employees
+              .filter((emp) => active || emp.Active)
+              .map((emp, index) => (
+                <tr key={emp._id} className="hover:bg-gray-200 transition">
+                  <td className="px-4 py-2">{index + 1}</td>
+                  <td className="px-4 py-2">
+                    {editingId === emp._id ? (
+                      <input
+                        value={editedEmployee.name || ""}
+                        onChange={(e) => handleChange("name", e.target.value)}
+                        className="border rounded px-2 py-1 w-full"
+                      />
                     ) : (
-                      "No"
-                    )
-                  ) : (
-                    ""
-                  )}
-                </td>
-                <td className="px-4 py-2 flex justify-center gap-2">
-                  {editingId === emp._id ? (
-                    <>
-                      <button
-                        onClick={handleSave}
-                        className="bg-green-500 hover:bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm transition"
+                      emp.name
+                    )}
+                  </td>
+                  <td className="px-4 py-2">
+                    {editingId === emp._id ? (
+                      <select
+                        value={editedEmployee.taxReport || ""}
+                        onChange={(e) =>
+                          handleChange("taxReport", e.target.value)
+                        }
+                        className="border rounded px-2 py-1 w-full"
                       >
-                        Save
-                      </button>
-                      <button
-                        onClick={() => setEditingId(null)}
-                        className="bg-gray-400 hover:bg-gray-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm transition"
+                        <option value="">Select Tax Report</option>
+                        <option value="1099">1099</option>
+                        <option value="W-2">W-2</option>
+                      </select>
+                    ) : (
+                      emp.taxReport
+                    )}
+                  </td>
+                  <td className="px-4 py-2">
+                    {editingId === emp._id ? (
+                      <input
+                        type="number"
+                        value={
+                          editedEmployee.hourlyPay === ""
+                            ? ""
+                            : editedEmployee.hourlyPay
+                        }
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          handleChange(
+                            "hourlyPay",
+                            val === "" ? "" : parseFloat(val)
+                          );
+                        }}
+                        className="border rounded px-2 py-1 w-full"
+                      />
+                    ) : (
+                      `$${(emp.hourlyPay ?? 0).toFixed(2)}`
+                    )}
+                  </td>
+                  <td className="px-4 py-2">
+                    {editingId === emp._id ? (
+                      <input
+                        value={editedEmployee.number || ""}
+                        onChange={(e) => handleChange("number", e.target.value)}
+                        className="border rounded px-2 py-1 w-full"
+                      />
+                    ) : (
+                      emp.number
+                    )}
+                  </td>
+                  <td className="px-4 py-2">
+                    {editingId === emp._id ? (
+                      <input
+                        type="date"
+                        value={editedEmployee.StartDate || ""}
+                        onChange={(e) =>
+                          handleChange("StartDate", e.target.value)
+                        }
+                        className="border rounded px-2 py-1 w-full"
+                      />
+                    ) : emp.StartDate ? (
+                      new Date(emp.StartDate).toLocaleDateString()
+                    ) : (
+                      ""
+                    )}
+                  </td>
+                  <td className="px-4 py-2">
+                    {editingId === emp._id ? (
+                      <select
+                        value={
+                          editedEmployee.TipPercentage === ""
+                            ? ""
+                            : editedEmployee.TipPercentage * 100
+                        }
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          handleChange(
+                            "TipPercentage",
+                            val === "" ? "" : parseFloat(val) / 100
+                          );
+                        }}
+                        className="border rounded px-2 py-1 w-full"
                       >
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => handleEdit(emp)}
-                        className="bg-twohas hover:bg-gray-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm transition"
+                        <option value="">Select</option>
+                        <option value="50">50%</option>
+                        <option value="70">70%</option>
+                        <option value="100">100%</option>
+                      </select>
+                    ) : emp.TipPercentage !== undefined &&
+                      emp.TipPercentage !== "" ? (
+                      `${emp.TipPercentage * 100}%`
+                    ) : (
+                      ""
+                    )}
+                  </td>
+                  <td className="px-4 py-2">
+                    {editingId === emp._id ? (
+                      <select
+                        value={editedEmployee.Active ? "Yes" : "No"}
+                        onChange={(e) =>
+                          handleChange("Active", e.target.value === "Yes")
+                        }
+                        className="border rounded px-2 py-1 w-full"
                       >
-                        Edit
-                      </button>
-                    </>
-                  )}
-                </td>
-              </tr>
-            ))}
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                      </select>
+                    ) : emp.Active !== undefined ? (
+                      emp.Active ? (
+                        "Yes"
+                      ) : (
+                        "No"
+                      )
+                    ) : (
+                      ""
+                    )}
+                  </td>
+                  <td className="px-4 py-2 flex justify-center gap-2">
+                    {editingId === emp._id ? (
+                      <>
+                        <button
+                          onClick={handleSave}
+                          className="bg-green-500 hover:bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm transition"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={() => setEditingId(null)}
+                          className="bg-gray-400 hover:bg-gray-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm transition"
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => handleEdit(emp)}
+                          className="bg-twohas hover:bg-gray-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm transition"
+                        >
+                          Edit
+                        </button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

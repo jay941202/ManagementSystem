@@ -8,7 +8,7 @@ export default function Schedule() {
   const diffToMonday = todayDay === 0 ? -6 : 1 - todayDay;
 
   const startDateObj = new Date(today);
-  startDateObj.setDate(today.getDate() + diffToMonday + 7);
+  startDateObj.setDate(today.getDate() + diffToMonday);
 
   const printedDays = [];
   for (let i = 0; i < 21; i++) {

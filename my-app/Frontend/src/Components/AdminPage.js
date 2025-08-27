@@ -53,6 +53,26 @@ export default function AdminPage() {
           >
             CPA
           </NavLink>
+          <NavLink
+            to="Recipe"
+            className={({ isActive }) =>
+              `transition ${
+                isActive ? "border-b-2 border-white" : "hover:text-gray-300"
+              }`
+            }
+          >
+            Recipe
+          </NavLink>
+          <NavLink
+            to="Inventory"
+            className={({ isActive }) =>
+              `transition ${
+                isActive ? "border-b-2 border-white" : "hover:text-gray-300"
+              }`
+            }
+          >
+            Inventory
+          </NavLink>
         </nav>
       </header>
       <main className="flex-1 p-8 overflow-auto z-15">

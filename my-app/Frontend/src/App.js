@@ -8,6 +8,8 @@ import Tip from "./Components/AdminSubPages/Tip";
 import Schedule from "./Components/AdminSubPages/Schedule";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useUser } from "./context/usercontext";
+import Recipe from "./Components/AdminSubPages/Recipe";
+import Inventory from "./Components/AdminSubPages/Inventory";
 
 function App() {
   const { role } = useUser();
@@ -23,6 +25,8 @@ function App() {
           <Route path="Schedule" element={<Schedule />} />
           <Route path="Tip" element={<Tip />} />
           <Route path="Cpa" element={<CPA />} />
+          <Route path="Recipe" element={<Recipe />} />
+          <Route path="Inventory" element={<Inventory />} />
         </Route>
       )}
 
