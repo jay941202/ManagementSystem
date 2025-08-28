@@ -12,18 +12,21 @@ exports.getList = async (req, res) => {
 };
 exports.addInventory = async (req, res) => {
   try {
-    const { name, vendor, volume, price, unitPrice, inStock } = req.body;
+    const { name, vendor, volume, price, inStock } = req.body;
     const existingItem = await Inventory.findOne({ name, vendor });
     if (existingItem) {
       return res.status(400).json({ error: "Item already exists" });
     }
+    const parsedVolume = parseFloat(volume);
+    const parsedPrice = parseFloat(price);
+    const unitPrice = parsedVolume > 0 ? parsedPrice / parsedVolume : 0;
     const newInventory = await Inventory.create({
-      name: name,
-      vendor: vendor,
-      volume: volume,
-      price: price,
-      unitPrice: unitPrice,
-      inStock: inStock,
+      name,
+      vendor,
+      volume: parsedVolume,
+      price: parsedPrice,
+      unitPrice,
+      inStock,
     });
     res.json(newInventory);
   } catch (err) {
@@ -31,6 +34,7 @@ exports.addInventory = async (req, res) => {
     res.status(500).json({ error: "Failed to add inventory" });
   }
 };
+
 exports.updateInventory = async (req, res) => {
   try {
     const { id, name, vendor, volume, price, unitPrice, inStock } = req.body;

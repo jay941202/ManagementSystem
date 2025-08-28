@@ -143,9 +143,7 @@ export default function InventoryTable({
                     `$${item.price}`
                   )}
                 </td>
-                <td className="px-4 py-2">
-                  {calcUnitPrice(item.price, item.volume)}
-                </td>
+                <td className="px-4 py-2">${item.unitPrice.toFixed(2)}</td>
                 <td className="px-4 py-2">
                   {editingId === item._id ? (
                     <input

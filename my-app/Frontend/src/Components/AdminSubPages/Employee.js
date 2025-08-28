@@ -73,7 +73,6 @@ export default function Employee() {
         StartDate: today,
         taxReport: "",
       });
-      console.log(newEmployee);
       await fetchEmployee();
     } catch (error) {
       console.error("Failed to add", error);

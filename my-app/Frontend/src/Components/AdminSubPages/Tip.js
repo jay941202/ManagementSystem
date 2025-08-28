@@ -4,15 +4,17 @@ import API from "../../API/api";
 
 export default function Tip() {
   const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
+  const [year, setYear] = useState(today.getFullYear());
+  const [month, setMonth] = useState(today.getMonth());
+
   const startDay = new Date(year, month, 1).getDay();
   const endDate = new Date(year, month + 1, 0);
 
   const thisMonth = [];
   for (let i = 0; i < startDay; i++) thisMonth.push(null);
-  for (let i = 1; i <= endDate.getDate(); i++)
+  for (let i = 1; i <= endDate.getDate(); i++) {
     thisMonth.push(new Date(year, month, i));
+  }
 
   const [tip, setTip] = useState({});
 
@@ -47,7 +49,7 @@ export default function Tip() {
     };
 
     fetchSchedule();
-  }, []);
+  }, [year, month]);
 
   const handleConfirm = async (dateStr, shift) => {
     const dayData = tip[dateStr] || {
@@ -98,16 +100,16 @@ export default function Tip() {
       };
     });
   };
-  const handleEdit = (dateStr, shift, value) => {
+
+  const handleEdit = (dateStr, shift) => {
     setTip((prev) => {
       const dayData = prev[dateStr] || {};
-      const shiftData = dayData[dateStr] || { tipTotal: null };
       return {
         ...prev,
         [dateStr]: {
           ...dayData,
           [shift]: {
-            ...shiftData,
+            ...dayData[shift],
             tipConfirmed: false,
           },
         },
@@ -115,9 +117,65 @@ export default function Tip() {
     });
   };
 
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <h2 className="text-3xl font-bold mb-6 text-center">Tip Calendar</h2>
+
+      <div className="flex justify-center items-center gap-4 mb-6">
+        <button
+          onClick={() => {
+            if (month === 0) {
+              setMonth(11);
+              setYear(year - 1);
+            } else {
+              setMonth(month - 1);
+            }
+          }}
+          className="px-3 py-1 bg-gray-200 rounded"
+        >
+          ◀
+        </button>
+        <select
+          value={month}
+          onChange={(e) => setMonth(Number(e.target.value))}
+          className="border rounded px-3 py-1"
+        >
+          {monthNames.map((m, idx) => (
+            <option key={idx} value={idx}>
+              {m} {year}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={() => {
+            if (month === 11) {
+              setMonth(0);
+              setYear(year + 1);
+            } else {
+              setMonth(month + 1);
+            }
+          }}
+          className="px-3 py-1 bg-gray-200 rounded"
+        >
+          ▶
+        </button>
+      </div>
+
       <div className="grid grid-cols-7 gap-4 text-center text-sm font-bold text-gray-1000 mb-4">
         {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
           <div key={day} className="py-3 bg-gray-100 rounded-md shadow-sm">
