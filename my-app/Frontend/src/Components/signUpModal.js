@@ -49,6 +49,13 @@ export default function SignUpModal({ isOpen, onClose, onSuccess }) {
             onChange={handleChange}
             className="w-full px-3 py-2 border-2 rounded"
           />
+          <input
+            name="password"
+            type="number"
+            placeholder="Password"
+            onChange={handleChange}
+            className="w-full px-3 py-2 border-2 rounded"
+          />
           <button
             type="submit"
             className="w-full bg-twohas text-white py-2 rounded font-bold"

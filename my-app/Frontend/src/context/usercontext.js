@@ -12,6 +12,7 @@ const UserContext = createContext();
 export function UserProvider({ children }) {
   const [role, setRole] = useState(null);
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const logout = useCallback(() => {
@@ -51,13 +52,16 @@ export function UserProvider({ children }) {
       }
     }
 
+    setLoading(false);
     return () => {
       if (timeout) clearTimeout(timeout);
     };
   }, [logout]);
 
   return (
-    <UserContext.Provider value={{ role, setRole, user, setUser, logout }}>
+    <UserContext.Provider
+      value={{ role, setRole, user, setUser, logout, loading }}
+    >
       {children}
     </UserContext.Provider>
   );

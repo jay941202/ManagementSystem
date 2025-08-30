@@ -10,9 +10,14 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useUser } from "./context/usercontext";
 import Recipe from "./Components/AdminSubPages/Recipe";
 import Inventory from "./Components/AdminSubPages/Inventory";
+import ClosingSummary from "./Components/AdminSubPages/ClosingSummary";
 
 function App() {
-  const { role } = useUser();
+  const { role, loading } = useUser();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Routes>
@@ -20,13 +25,14 @@ function App() {
 
       {role === "admin" && (
         <Route path="/admin" element={<AdminPage />}>
-          <Route index element={<Employee />} />
+          <Route index element={<Navigate to="Employee" replace />} />
           <Route path="Employee" element={<Employee />} />
           <Route path="Schedule" element={<Schedule />} />
           <Route path="Tip" element={<Tip />} />
           <Route path="Cpa" element={<CPA />} />
           <Route path="Recipe" element={<Recipe />} />
           <Route path="Inventory" element={<Inventory />} />
+          <Route path="Day Summary" element={<ClosingSummary />} />
         </Route>
       )}
 

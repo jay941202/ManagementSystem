@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from "../../API/api";
-import InventoryTable from "../InventoryComponents/InventoryTable";
-import InventoryForm from "../InventoryComponents/InventoryForm";
+import InventoryTable from "./InventoryComponents/InventoryTable";
+import InventoryForm from "./InventoryComponents/InventoryForm";
 
 export default function Inventory() {
   const [newInventory, setNewInventory] = useState({
@@ -10,8 +10,10 @@ export default function Inventory() {
     volume: "",
     price: "",
     inStock: "",
+    updatesByEmp: false,
   });
   const [inventoryList, setInventoryList] = useState([]);
+  const [isOn, setIsOn] = useState(false);
 
   useEffect(() => {
     fetchInventory();
@@ -51,6 +53,7 @@ export default function Inventory() {
         volume: "",
         price: "",
         inStock: "",
+        updatesByEmp: false,
       });
       await fetchInventory();
     } catch (error) {
@@ -70,6 +73,8 @@ export default function Inventory() {
         newInventory={newInventory}
         setNewInventory={setNewInventory}
         handleAddInventory={handleAddInventory}
+        isOn={isOn}
+        setIsOn={setIsOn}
       />
 
       {Object.entries(groupedByVendor).map(([vendor, items]) => (
@@ -78,6 +83,7 @@ export default function Inventory() {
           <InventoryTable
             inventoryList={items}
             fetchInventory={fetchInventory}
+            isOn={isOn}
           />
         </div>
       ))}

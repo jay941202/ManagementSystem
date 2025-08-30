@@ -12,7 +12,7 @@ exports.getList = async (req, res) => {
 };
 exports.addInventory = async (req, res) => {
   try {
-    const { name, vendor, volume, price, inStock } = req.body;
+    const { name, vendor, volume, price, inStock, updatesByEmp } = req.body;
     const existingItem = await Inventory.findOne({ name, vendor });
     if (existingItem) {
       return res.status(400).json({ error: "Item already exists" });
@@ -27,6 +27,7 @@ exports.addInventory = async (req, res) => {
       price: parsedPrice,
       unitPrice,
       inStock,
+      updatesByEmp,
     });
     res.json(newInventory);
   } catch (err) {
@@ -37,12 +38,21 @@ exports.addInventory = async (req, res) => {
 
 exports.updateInventory = async (req, res) => {
   try {
-    const { id, name, vendor, volume, price, unitPrice, inStock } = req.body;
+    const {
+      id,
+      name,
+      vendor,
+      volume,
+      price,
+      unitPrice,
+      inStock,
+      updatesByEmp,
+    } = req.body;
     if (!id)
       return res.status(400).json({ message: "Inventory ID is required" });
     const updatedInventory = await Inventory.findByIdAndUpdate(
       id,
-      { name, vendor, volume, price, unitPrice, inStock },
+      { name, vendor, volume, price, unitPrice, inStock, updatesByEmp },
       { new: true }
     );
     if (!updatedInventory) {

@@ -3,55 +3,45 @@ import { NavLink, Outlet } from "react-router-dom";
 import { useUser } from "../context/usercontext";
 
 export default function UserPage() {
-  const { user } = useUser();
+  const { user, logout } = useUser();
   return (
-    <div className="flex flex-col min-h-screen bg-white text-black">
-      <header className="bg-twohas text-white px-6 py-4 shadow-md flex justify-between items-center">
-        <h1 className="text-2xl font-bold select-none">{`Welcome ${user}`}</h1>
-        <nav className="flex gap-6 text-lg font-semibold">
-          <NavLink
-            to="dashboard"
-            className={({ isActive }) =>
-              `transition ${
-                isActive ? "border-b-2 border-white" : "hover:text-gray-300"
-              }`
-            }
+    <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900">
+      <header className="bg-twohas text-white px-6 py-4 shadow-lg flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-twohas font-bold">
+            {user.name[0].toUpperCase()}
+          </div>
+          <h1 className="text-2xl font-semibold select-none">
+            Welcome, {user.name}
+          </h1>
+        </div>
+        <div className="flex items-center gap-4">
+          <nav className="flex gap-4 flex-wrap">
+            {["dashboard", "users", "settings", "logs"].map((path) => (
+              <NavLink
+                key={path}
+                to={path}
+                className={({ isActive }) =>
+                  `px-3 py-1 rounded-md text-sm font-medium transition ${
+                    isActive
+                      ? "bg-white text-twohas shadow-md"
+                      : "hover:bg-white/20"
+                  }`
+                }
+              >
+                {path.charAt(0).toUpperCase() + path.slice(1)}
+              </NavLink>
+            ))}
+          </nav>
+          <button
+            onClick={logout}
+            className="bg-white text-twohas font-semibold px-4 py-1 rounded-md shadow hover:bg-gray-100 transition"
           >
-            Schedule
-          </NavLink>
-          <NavLink
-            to="users"
-            className={({ isActive }) =>
-              `transition ${
-                isActive ? "border-b-2 border-white" : "hover:text-gray-300"
-              }`
-            }
-          >
-            Users
-          </NavLink>
-          <NavLink
-            to="settings"
-            className={({ isActive }) =>
-              `transition ${
-                isActive ? "border-b-2 border-white" : "hover:text-gray-300"
-              }`
-            }
-          >
-            Settings
-          </NavLink>
-          <NavLink
-            to="logs"
-            className={({ isActive }) =>
-              `transition ${
-                isActive ? "border-b-2 border-white" : "hover:text-gray-300"
-              }`
-            }
-          >
-            Logs
-          </NavLink>
-        </nav>
+            Log out
+          </button>
+        </div>
       </header>
-      <main className="flex-1 p-8 overflow-auto">
+      <main className="flex-1 p-6 md:p-8 overflow-auto">
         <Outlet />
       </main>
     </div>
