@@ -1,5 +1,4 @@
 const Inventory = require("../models/InventoryModel");
-const User = require("../models/userModel");
 
 exports.getList = async (req, res) => {
   try {
@@ -13,7 +12,7 @@ exports.getList = async (req, res) => {
 exports.addInventory = async (req, res) => {
   try {
     const { name, vendor, volume, price, inStock, updatesByEmp } = req.body;
-    const existingItem = await Inventory.findOne({ name, vendor });
+    const existingItem = await Inventory.findOne({ name });
     if (existingItem) {
       return res.status(400).json({ error: "Item already exists" });
     }

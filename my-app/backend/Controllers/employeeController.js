@@ -109,3 +109,19 @@ exports.addEmployee = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+exports.unavailableDates = async (req, res) => {
+  try {
+    const { employeeId, startDate, endDate } = req.body;
+    const employee = await User.findById(employeeId);
+    if (!employee) return res.status(404).json({ error: "Employee not found" });
+    employee.unavailableDates.push({ startDate, endDate });
+    await employee.save();
+    res.status(200).json({
+      message: "Unavailable dates added",
+      unavailableDates: employee.unavailableDates,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to add unavailable dates" });
+  }
+};

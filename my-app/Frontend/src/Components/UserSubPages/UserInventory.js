@@ -18,7 +18,6 @@ export default function UserInventory() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const UBE = res.data.filter((e) => e.updatesByEmp === true);
-      console.log(UBE);
       setInventoryList(UBE);
     } catch (error) {
       console.error("Failed", error);
@@ -30,14 +29,6 @@ export default function UserInventory() {
   }, []);
 
   const handleAddInventory = async () => {
-    const exists = inventoryList.some(
-      (item) => item.name.toLowerCase() === newInventory.name.toLowerCase()
-    );
-
-    if (exists) {
-      alert("Item Already Exist");
-      return;
-    }
     try {
       const payload = {
         ...newInventory,
@@ -51,7 +42,11 @@ export default function UserInventory() {
       setNewInventory({ name: "", inStock: "" });
       await fetchInventory();
     } catch (error) {
-      console.error("Failed to add", error);
+      if (error.response?.status === 400) {
+        alert("Item already exists in database");
+      } else {
+        console.error("Failed to add", error);
+      }
     }
   };
 

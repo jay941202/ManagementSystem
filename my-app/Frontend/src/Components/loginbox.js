@@ -20,7 +20,7 @@ export default function Loginbox() {
     try {
       const res = await API.post("/user/login", form);
       localStorage.setItem("token", res.data.token);
-      alert(`로그인 성공`);
+      alert(`Successfully Logged In`);
 
       const role = await API.get("/user/role", {
         headers: { Authorization: `Bearer ${res.data.token}` },
@@ -29,11 +29,10 @@ export default function Loginbox() {
       setUser(role.data.name);
       setRole(role.data.role);
 
-      // 여기에 추가
       localStorage.setItem("role", role.data.role);
       localStorage.setItem("user", JSON.stringify({ name: role.data.name }));
     } catch (error) {
-      alert(`로그인 실패 ${error}`);
+      alert(`Login ${error}`);
     }
   };
 

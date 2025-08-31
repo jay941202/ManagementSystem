@@ -58,9 +58,7 @@ export default function UserInventoryTable({ inventoryList, fetchInventory }) {
             inventoryList.map((item, index) => (
               <tr key={item._id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3 text-sm">{index + 1}</td>
-                <td className="px-4 py-3 text-sm font-medium text-center">
-                  {item.name}
-                </td>
+                <td className="px-4 py-3 text-sm text-center">{item.name}</td>
                 <td className="px-4 py-3 text-sm text-center">
                   {editingId === item._id ? (
                     <input

@@ -6,4 +6,5 @@ router.get("/employeeList", employeeController.getAllEmployees);
 router.delete("/deleteEmployee", employeeController.deleteEmployee);
 router.put("/updateEmployee", employeeController.updateEmployee);
 router.post("/addEmployee", employeeController.addEmployee);
+router.put("/unavailableDates", employeeController.unavailableDates);
 module.exports = router;

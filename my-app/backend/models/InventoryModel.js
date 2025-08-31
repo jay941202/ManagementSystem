@@ -8,7 +8,7 @@ const InventorySchema = new mongoose.Schema(
     },
     vendor: {
       type: String,
-      default: null,
+      default: "No Vendor",
     },
     volume: {
       type: Number,
@@ -28,7 +28,7 @@ const InventorySchema = new mongoose.Schema(
     },
     updatesByEmp: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
   { timestamps: true }

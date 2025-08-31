@@ -48,6 +48,12 @@ const userSchema = new mongoose.Schema(
       default: "W-2",
       enum: ["1099", "W-2"],
     },
+    unavailableDates: [
+      {
+        startDate: { type: Date },
+        endDate: { type: Date },
+      },
+    ],
   },
   {
     timestamps: true,

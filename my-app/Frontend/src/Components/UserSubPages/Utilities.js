@@ -2,6 +2,7 @@ import React from "react";
 import ClockInOut from "./UtilityComponents/ClockInOut";
 import UserCashCount from "./UtilityComponents/UserCashCount";
 import UserRefund from "./UtilityComponents/UserRefund";
+import UnavailableDates from "./UtilityComponents/UnavailableDates";
 
 export default function Utilities() {
   function getWorkdayStr() {
@@ -26,6 +27,9 @@ export default function Utilities() {
 
       <div className="p-6 bg-white rounded-xl shadow-md border-2 border-gray-300">
         <UserRefund workday={workdayStr} />
+      </div>
+      <div className="p-6 bg-white rounded-xl shadow-md border-2 border-gray-300">
+        <UnavailableDates workday={workdayStr} />
       </div>
     </div>
   );

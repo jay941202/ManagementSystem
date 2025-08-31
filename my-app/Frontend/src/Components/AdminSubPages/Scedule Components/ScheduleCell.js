@@ -55,6 +55,7 @@ export default function ScheduleCell({
               selected={shiftData.employees}
               onChange={(selected) => handleChange(dateStr, shift, selected)}
               disabled={isConfirmed}
+              selectedDate={new Date(dateStr)}
             />
             {isConfirmed ? (
               <button

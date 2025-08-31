@@ -79,9 +79,7 @@ export default function Inventory() {
 
       {Object.entries(groupedByVendor).map(([vendor, items]) => (
         <div key={vendor}>
-          <h2 className="text-2xl font-bold mb-4">
-            {vendor ? vendor : "Need to Assign vendor"}
-          </h2>
+          <h2 className="text-2xl font-bold mb-4">{vendor}</h2>
           <InventoryTable
             inventoryList={items}
             fetchInventory={fetchInventory}
