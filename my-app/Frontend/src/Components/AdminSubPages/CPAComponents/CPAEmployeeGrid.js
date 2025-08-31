@@ -87,10 +87,10 @@ export default function CPAEmployeeGrid({
         {dateRange.map((_, idx) => (
           <React.Fragment key={idx}>
             <div className="border text-center col-span-2 flex items-center justify-center">
-              AM
+              Open
             </div>
             <div className="border text-center col-span-2 flex items-center justify-center">
-              PM
+              Close
             </div>
           </React.Fragment>
         ))}
@@ -161,8 +161,9 @@ export default function CPAEmployeeGrid({
                 const startTime = new Date(target.clockIn);
                 const outTime = new Date(target.clockOut);
                 return (
-                  ((outTime - startTime) / (1000 * 60 * 60)) * emp.hourlyPay
-                );
+                  ((outTime - startTime) / (1000 * 60 * 60)) *
+                  emp.hourlyPay
+                ).toFixed(2);
               };
 
               return (

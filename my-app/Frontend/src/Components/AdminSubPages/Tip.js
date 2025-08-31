@@ -177,7 +177,7 @@ export default function Tip() {
       </div>
 
       <div className="grid grid-cols-7 gap-4 text-center text-sm font-bold text-gray-1000 mb-4">
-        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
           <div key={day} className="py-3 bg-gray-100 rounded-md shadow-sm">
             {day}
           </div>

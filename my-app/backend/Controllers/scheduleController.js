@@ -26,8 +26,8 @@ exports.confirmShift = async (req, res) => {
 exports.getScheduleList = async (req, res) => {
   try {
     const schedules = await Schedule.find()
-      .populate("AM.employees.employee", "name TipPercentage Active")
-      .populate("PM.employees.employee", "name TipPercentage Active");
+      .populate("AM.employees.employee", "name TipPercentage Active number")
+      .populate("PM.employees.employee", "name TipPercentage Active number");
 
     res.json(schedules);
   } catch (err) {
@@ -57,5 +57,35 @@ exports.confirmTip = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to confirm tip" });
+  }
+};
+
+exports.clockInOut = async (req, res) => {
+  try {
+    const { date, shift, employeeId, type } = req.body;
+    const schedule = await Schedule.findOne({ date });
+    if (!schedule) return res.status(404).json({ error: "Schedule not found" });
+
+    const employees = schedule[shift]?.employees || [];
+    const targetEmployee = employees.find(
+      (e) => e.employee._id.toString() === employeeId
+    );
+
+    if (!targetEmployee)
+      return res.status(404).json({ error: "Employee not found" });
+
+    if (type === "Clock In") targetEmployee.clockIn = new Date();
+    if (type === "Clock Out") targetEmployee.clockOut = new Date();
+
+    await schedule.save();
+    res.json({
+      employee: targetEmployee.employee.name,
+      type,
+      time:
+        type === "Clock In" ? targetEmployee.clockIn : targetEmployee.clockOut,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to clock in/out" });
   }
 };

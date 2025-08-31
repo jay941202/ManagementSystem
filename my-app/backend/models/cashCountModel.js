@@ -15,14 +15,6 @@ const cashCountSchema = new mongoose.Schema(
       5: { type: Number, default: 0 },
       1: { type: Number, default: 0 },
     },
-    coins: {
-      1: { type: Number, default: 0 },
-      0.5: { type: Number, default: 0 },
-      0.25: { type: Number, default: 0 },
-      0.1: { type: Number, default: 0 },
-      0.05: { type: Number, default: 0 },
-      0.01: { type: Number, default: 0 },
-    },
   },
   { timestamps: true }
 );

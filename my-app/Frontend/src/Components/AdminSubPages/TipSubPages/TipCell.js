@@ -27,7 +27,7 @@ export default function TipCell({
             }`}
           >
             <div className="text-xs font-semibold select-none">
-              {shift === "AM" ? "Morning" : "Night"}
+              {shift === "AM" ? "Opening" : "Closing"}
             </div>
             {!isConfirmed ? (
               <input

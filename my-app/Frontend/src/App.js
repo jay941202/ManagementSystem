@@ -11,6 +11,10 @@ import { useUser } from "./context/usercontext";
 import Recipe from "./Components/AdminSubPages/Recipe";
 import Inventory from "./Components/AdminSubPages/Inventory";
 import ClosingSummary from "./Components/AdminSubPages/ClosingSummary";
+import UserInventory from "./Components/UserSubPages/UserInventory";
+import Tv from "./Components/UserSubPages/Tv";
+import Utilities from "./Components/UserSubPages/Utilities";
+import UserRecipe from "./Components/UserSubPages/UserRecipe";
 
 function App() {
   const { role, loading } = useUser();
@@ -36,7 +40,15 @@ function App() {
         </Route>
       )}
 
-      {role === "user" && <Route path="/user" element={<UserPage />} />}
+      {role === "user" && (
+        <Route path="/user" element={<UserPage />}>
+          <Route index element={<Navigate to="Utilities" replace />} />
+          <Route path="Inventory" element={<UserInventory />} />
+          <Route path="Recipe" element={<UserRecipe />} />
+          <Route path="TV" element={<Tv />} />
+          <Route path="Utilities" element={<Utilities />} />
+        </Route>
+      )}
 
       <Route
         path="*"

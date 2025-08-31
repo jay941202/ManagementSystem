@@ -8,18 +8,23 @@ const InventorySchema = new mongoose.Schema(
     },
     vendor: {
       type: String,
+      default: null,
     },
     volume: {
       type: Number,
+      default: 0,
     },
     price: {
       type: Number,
+      default: 0,
     },
     unitPrice: {
       type: Number,
+      default: 0,
     },
     inStock: {
       type: Number,
+      default: null,
     },
     updatesByEmp: {
       type: Boolean,
