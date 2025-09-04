@@ -89,7 +89,7 @@ export default function Loginbox() {
           >
             Login
           </button>
-          {/* {buttonActivate && (
+          {buttonActivate && (
             <button
               onClick={() => setIsOpen(true)}
               type="button"
@@ -97,7 +97,7 @@ export default function Loginbox() {
             >
               Sign up
             </button>
-          )} */}
+          )}
         </form>
       </div>
       <SignUpModal
