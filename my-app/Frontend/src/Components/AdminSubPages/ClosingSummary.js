@@ -254,7 +254,11 @@ export default function ClosingSummary() {
           <tbody className="divide-y divide-gray-200">
             {employee.flatMap((emp) =>
               emp.unavailableDates
-                .filter((ud) => new Date(ud.startDate) >= today)
+                .filter(
+                  (ud) =>
+                    new Date(ud.startDate) >= today ||
+                    new Date(ud.endDate) >= today
+                )
                 .map((ud, idx) => (
                   <tr key={`${emp._id}`} className="hover:bg-gray-50">
                     <td className="px-2 py-1 text-sm">{emp.name}</td>
