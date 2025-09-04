@@ -111,10 +111,10 @@ exports.addEmployee = async (req, res) => {
 };
 exports.unavailableDates = async (req, res) => {
   try {
-    const { employeeId, startDate, endDate } = req.body;
+    const { employeeId, startDate, endDate, reason } = req.body;
     const employee = await User.findById(employeeId);
     if (!employee) return res.status(404).json({ error: "Employee not found" });
-    employee.unavailableDates.push({ startDate, endDate });
+    employee.unavailableDates.push({ startDate, endDate, reason });
     await employee.save();
     res.status(200).json({
       message: "Unavailable dates added",

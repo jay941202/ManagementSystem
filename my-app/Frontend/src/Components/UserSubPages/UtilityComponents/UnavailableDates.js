@@ -3,13 +3,16 @@ import API from "../../../API/api";
 
 export default function UnavailableDates() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [form, setForm] = useState({
+    startDate: "",
+    endDate: "",
+    reason: "",
+  });
   const [pin, setPin] = useState("");
-  const [employee, setEmployee] = useState("");
+  const [employee, setEmployee] = useState([]);
 
   const openModal = () => {
-    if (!startDate || !endDate) {
+    if (!form.startDate || !form.endDate) {
       return alert("Please choose start date and end date.");
     }
     setIsModalOpen(true);
@@ -19,6 +22,7 @@ export default function UnavailableDates() {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
   const fetchEmployee = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -30,9 +34,11 @@ export default function UnavailableDates() {
       console.error(err);
     }
   };
+
   useEffect(() => {
     fetchEmployee();
   }, []);
+
   const handleConfirm = async () => {
     try {
       if (pin.length !== 4) {
@@ -45,8 +51,7 @@ export default function UnavailableDates() {
 
       const payload = {
         employeeId: targetEmployee._id,
-        startDate,
-        endDate,
+        ...form,
       };
       const token = localStorage.getItem("token");
 
@@ -56,18 +61,20 @@ export default function UnavailableDates() {
 
       alert("Unavailable dates saved.");
       setIsModalOpen(false);
-      setStartDate("");
-      setEndDate("");
+      setForm({ startDate: "", endDate: "", reason: "" });
     } catch (err) {
       console.error("Failed to save unavailable dates", err);
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
   return (
     <section>
-      <h2 className="text-xl font-bold mb-4 text-twohas">
-        Set Unavailable Dates
-      </h2>
+      <h2 className="text-xl font-bold mb-4 text-twohas">Unavailable Dates</h2>
 
       <div className="flex items-end gap-4 mb-6">
         <div>
@@ -76,8 +83,9 @@ export default function UnavailableDates() {
           </label>
           <input
             type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
+            name="startDate"
+            value={form.startDate}
+            onChange={handleChange}
             className="border px-4 py-2 rounded-lg"
           />
         </div>
@@ -87,9 +95,18 @@ export default function UnavailableDates() {
           </label>
           <input
             type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
+            name="endDate"
+            value={form.endDate}
+            onChange={handleChange}
             className="border px-4 py-2 rounded-lg"
+          />
+          <input
+            type="text"
+            name="reason"
+            value={form.reason}
+            placeholder="Enter Reason"
+            onChange={handleChange}
+            className="border px-4 py-2 rounded-lg ml-3"
           />
         </div>
         <button
@@ -99,6 +116,7 @@ export default function UnavailableDates() {
           Add
         </button>
       </div>
+
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
           <div className="bg-white rounded-xl shadow-xl p-6 w-80 text-center">

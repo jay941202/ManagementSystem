@@ -17,7 +17,7 @@ export default function Recipe() {
       });
       setRecipes(res.data);
     } catch (error) {
-      console.log("Failed to load Recipe List", error);
+      console.error("Failed to load Recipe List", error);
     }
   };
   const fetchInventory = async () => {
@@ -28,7 +28,7 @@ export default function Recipe() {
       });
       setInventoryList(res.data);
     } catch (error) {
-      console.log("Failed to load InventoryList", error);
+      console.error("Failed to load InventoryList", error);
     }
   };
   useEffect(() => {
@@ -58,13 +58,11 @@ export default function Recipe() {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log(payload);
       await fetchRecipe();
     } catch (err) {
       console.error("Failed to add recipe", err);
     }
   };
-  console.log(recipes);
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <h2 className="text-3xl font-bold mb-6 text-center">Recipe Manager</h2>

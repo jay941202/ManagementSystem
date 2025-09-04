@@ -62,6 +62,7 @@ export default function RecipeTable({
           inventoryItem: ing.inventoryItem._id,
           volume: ing.volume,
         })),
+        addToInventory: editedRecipe.addToInventory || false,
       };
       await API.put(`/recipe/updateRecipe/`, payload, {
         headers: { Authorization: `Bearer ${token}` },
@@ -77,6 +78,28 @@ export default function RecipeTable({
     setEditingId(null);
   };
 
+  const handleInventory = async (recipe) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const payload = {
+        name: recipe.name,
+        vendor: "TwoHas",
+        volume: 1,
+        price: recipe.costOfGood || 0,
+        inStock: null,
+        updatesByEmp: false,
+      };
+      await API.post("/inventory/addInventory", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert("Successfully Added to Inventory");
+      window.location.reload();
+    } catch (error) {
+      console.error("Inventory update failed:", error);
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {recipes.map((recipe) => (
@@ -84,6 +107,15 @@ export default function RecipeTable({
           key={recipe._id}
           className="bg-white p-5 rounded-xl shadow-lg flex flex-col justify-between hover:shadow-2xl transition"
         >
+          <div className="flex items-center mb-3">
+            <button
+              onClick={() => handleInventory(recipe)}
+              className="py-1 text-blue-500 text-sm font-medium hover:underline mb-3"
+            >
+              Add to Inventory
+            </button>
+          </div>
+
           {editingId === recipe._id ? (
             <>
               <input

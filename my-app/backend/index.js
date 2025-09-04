@@ -7,6 +7,7 @@ const scheduleRouter = require("./routes/scheduleRouter");
 const inventoryRouter = require("./routes/InventoryRouter");
 const recipeRouter = require("./routes/recipeRouter");
 const summaryRouter = require("./routes/summaryRouter");
+const tvRouter = require("./routes/tvRouter");
 const cors = require("cors");
 
 const app = express();
@@ -31,6 +32,7 @@ app.use("/api/schedule", scheduleRouter);
 app.use("/api/inventory", inventoryRouter);
 app.use("/api/recipe", recipeRouter);
 app.use("/api/summary", summaryRouter);
+app.use("/api/tv", tvRouter);
 
 app.listen(PORT, () => {
   console.log(`server running on port ${PORT}`);

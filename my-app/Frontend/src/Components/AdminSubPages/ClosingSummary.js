@@ -4,13 +4,19 @@ import API from "../../API/api";
 const formatTime = (timestamp) => {
   if (!timestamp) return "";
   const date = new Date(timestamp);
-  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  return date.toLocaleTimeString([], {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 };
 
 export default function ClosingSummary() {
   const [cashCountList, setCashCountList] = useState([]);
   const [refundList, setRefundList] = useState([]);
   const [attendanceList, setAttendanceList] = useState([]);
+  const [employee, setEmployee] = useState([]);
 
   const fetchCashCount = async () => {
     try {
@@ -19,6 +25,18 @@ export default function ClosingSummary() {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCashCountList(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const fetchEmployee = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await API.get("/employee/employeeList", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setEmployee(res.data);
+      console.log(res.data);
     } catch (error) {
       console.error(error);
     }
@@ -49,6 +67,7 @@ export default function ClosingSummary() {
   };
 
   useEffect(() => {
+    fetchEmployee();
     fetchCashCount();
     fetchRefund();
     fetchAttendance();
@@ -210,6 +229,49 @@ export default function ClosingSummary() {
                 </td>
               </tr>
             ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="overflow-x-auto rounded-xl shadow">
+        <h2 className="text-lg font-semibold mb-2">Unavailable Dates list</h2>
+        <table className="min-w-full table-auto border border-gray-200 bg-white">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="px-2 py-2 border-b text-left text-sm font-semibold text-gray-600">
+                Name
+              </th>
+              <th className="px-2 py-2 border-b text-left text-sm font-semibold text-gray-600">
+                Start Date
+              </th>
+              <th className="px-2 py-2 border-b text-left text-sm font-semibold text-gray-600">
+                End Date
+              </th>
+              <th className="px-2 py-2 border-b text-left text-sm font-semibold text-gray-600">
+                Reason
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {employee.flatMap((emp) =>
+              emp.unavailableDates
+                .filter((ud) => new Date(ud.startDate) >= today)
+                .map((ud, idx) => (
+                  <tr key={`${emp._id}`} className="hover:bg-gray-50">
+                    <td className="px-2 py-1 text-sm">{emp.name}</td>
+                    <td className="px-2 py-1 text-sm">
+                      {ud.startDate
+                        ? new Date(ud.startDate).toLocaleDateString("en-US")
+                        : ""}
+                    </td>
+                    <td className="px-2 py-1 text-sm">
+                      {ud.endDate
+                        ? new Date(ud.endDate).toLocaleDateString("en-US")
+                        : ""}
+                    </td>
+                    <td className="px-2 py-1 text-sm">{ud.reason}</td>
+                  </tr>
+                ))
+            )}
           </tbody>
         </table>
       </div>

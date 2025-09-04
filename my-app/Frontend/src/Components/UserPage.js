@@ -3,7 +3,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import { useUser } from "../context/usercontext";
 
 export default function UserPage() {
-  const { user, logout } = useUser();
+  const { logout } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const [menuHeight, setMenuHeight] = useState(0);

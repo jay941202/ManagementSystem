@@ -52,6 +52,7 @@ const userSchema = new mongoose.Schema(
       {
         startDate: { type: Date },
         endDate: { type: Date },
+        reason: { type: String },
       },
     ],
   },
