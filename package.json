@@ -1,5 +1,8 @@
 {
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^16.5.0",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.16.0"
   },
   "devDependencies": {

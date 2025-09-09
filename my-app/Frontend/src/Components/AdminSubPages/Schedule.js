@@ -174,10 +174,7 @@ export default function Schedule() {
         <CaptureTable tableRef={tableRef} />
       </div>
 
-      <div
-        ref={tableRef}
-        className="w-full overflow-auto border rounded-lg shadow-md bg-white mt-4"
-      >
+      <div ref={tableRef} className="w-full overflow-auto mt-4">
         <ScheduleTableByEmp employeesList={employeesList} schedule={schedule} />
       </div>
     </div>
