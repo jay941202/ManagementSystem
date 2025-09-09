@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ScheduleCell from "./Scedule Components/ScheduleCell";
 import API from "../../API/api";
+import ScheduleTableByEmp from "./Scedule Components/ScheduleTableByEmp";
+import CaptureTable from "../../Capture/CaptureTable";
 
 export default function Schedule() {
+  const tableRef = useRef();
   const today = new Date();
   const todayDay = today.getDay();
   const diffToMonday = todayDay === 0 ? -6 : 1 - todayDay;
@@ -18,40 +21,53 @@ export default function Schedule() {
   }
 
   const [schedule, setSchedule] = useState({});
+  const [employeesList, setEmployeesList] = useState([]);
+  const fetchEmployee = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await API.get("/employee/employeeList", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const activeEmployees = res.data.filter((emp) => emp.Active);
+      setEmployeesList(activeEmployees);
+    } catch (error) {
+      console.error("Failed", error);
+    }
+  };
+  const fetchSchedule = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await API.get("/schedule/list", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const mappedSchedule = {};
+      res.data.forEach((item) => {
+        const dateObj = new Date(item.date);
+        const key = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
+
+        const mapShift = (shiftData) => {
+          if (!shiftData) return { employees: [], scheduleConfirmed: false };
+          return {
+            employees: shiftData.employees.map((e) => e.employee),
+            scheduleConfirmed: shiftData.scheduleConfirmed || false,
+          };
+        };
+
+        mappedSchedule[key] = {
+          AM: mapShift(item.AM),
+          PM: mapShift(item.PM),
+        };
+      });
+
+      setSchedule(mappedSchedule);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
-    const fetchSchedule = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await API.get("/schedule/list", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const mappedSchedule = {};
-        res.data.forEach((item) => {
-          const dateObj = new Date(item.date);
-          const key = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
-
-          const mapShift = (shiftData) => {
-            if (!shiftData) return { employees: [], scheduleConfirmed: false };
-            return {
-              employees: shiftData.employees.map((e) => e.employee),
-              scheduleConfirmed: shiftData.scheduleConfirmed || false,
-            };
-          };
-
-          mappedSchedule[key] = {
-            AM: mapShift(item.AM),
-            PM: mapShift(item.PM),
-          };
-        });
-
-        setSchedule(mappedSchedule);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
+    fetchEmployee();
     fetchSchedule();
   }, []);
 
@@ -118,15 +134,17 @@ export default function Schedule() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <h2 className="text-3xl font-bold mb-6 text-center">Scheduler</h2>
-      <div className="grid grid-cols-7 gap-4 text-center text-sm font-bold text-gray-1000 mb-4">
+    <div className="p-6 max-w-7xl mx-auto bg-gray-50 rounded-lg shadow-lg space-y-6">
+      <h2 className="text-3xl font-bold text-center">Scheduler</h2>
+
+      <div className="grid grid-cols-7 gap-4 text-center text-sm font-bold text-gray-1000">
         {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
           <div key={d} className="py-3 bg-gray-100 rounded-md shadow-sm">
             {d}
           </div>
         ))}
       </div>
+
       <div className="grid grid-cols-7 gap-4 text-sm">
         {printedDays.map(({ dateObj }, index) => {
           const dateStr = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
@@ -139,9 +157,23 @@ export default function Schedule() {
               handleChange={handleChange}
               handleConfirm={handleConfirm}
               handleEdit={handleEdit}
+              employeesList={employeesList}
             />
           );
         })}
+      </div>
+
+      <div className="w-full mb-4 flex items-center">
+        <div className="ml-auto mt-10">
+          <CaptureTable tableRef={tableRef} />
+        </div>
+      </div>
+
+      <div
+        ref={tableRef}
+        className="w-full overflow-auto border rounded-lg shadow-md bg-white"
+      >
+        <ScheduleTableByEmp employeesList={employeesList} schedule={schedule} />
       </div>
     </div>
   );

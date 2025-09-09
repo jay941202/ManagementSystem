@@ -36,7 +36,6 @@ export default function ClosingSummary() {
         headers: { Authorization: `Bearer ${token}` },
       });
       setEmployee(res.data);
-      console.log(res.data);
     } catch (error) {
       console.error(error);
     }

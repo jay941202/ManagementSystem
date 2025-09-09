@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import MultiSelectDropdown from "./MultiSelectDropdown";
-import API from "../../../API/api";
 
 export default function ScheduleCell({
   dateStr,
@@ -8,28 +7,10 @@ export default function ScheduleCell({
   handleChange,
   handleConfirm,
   handleEdit,
+  employeesList,
 }) {
-  const [employeesList, setEmployeesList] = useState([]);
-
-  const fetchEmployee = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await API.get("/employee/employeeList", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const activeEmployees = res.data.filter((emp) => emp.Active);
-      setEmployeesList(activeEmployees);
-    } catch (error) {
-      console.error("Failed", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchEmployee();
-  }, []);
-
   return (
-    <div className="h-64 min-w-[120px] border border-gray-500 rounded-xl bg-white shadow-lg flex flex-col justify-between hover:shadow-xl transition-shadow">
+    <div className="h-[296px] min-w-[120px] border border-gray-500 rounded-xl bg-white shadow-lg flex flex-col justify-between hover:shadow-xl transition-shadow">
       <div className="px-3 pt-1 text-right text-s font-bold text-red-500 h-6 select-none">
         {dateStr}
       </div>
