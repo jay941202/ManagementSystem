@@ -17,7 +17,7 @@ console.log("JWT_SECRET:", process.env.JWT_SECRET);
 
 app.use(
   cors({
-    origin: "https://www.twohas.com",
+    origin: ["http://localhost:3000", "https://www.twohas.com"],
     credentials: true,
   })
 );
