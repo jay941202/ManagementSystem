@@ -22,6 +22,7 @@ export default function Schedule() {
 
   const [schedule, setSchedule] = useState({});
   const [employeesList, setEmployeesList] = useState([]);
+
   const fetchEmployee = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -31,9 +32,10 @@ export default function Schedule() {
       const activeEmployees = res.data.filter((emp) => emp.Active);
       setEmployeesList(activeEmployees);
     } catch (error) {
-      console.error("Failed", error);
+      console.error("Failed to fetch employees", error);
     }
   };
+
   const fetchSchedule = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -62,7 +64,7 @@ export default function Schedule() {
 
       setSchedule(mappedSchedule);
     } catch (err) {
-      console.error(err);
+      console.error("Failed to fetch schedule", err);
     }
   };
 
@@ -134,44 +136,47 @@ export default function Schedule() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto bg-gray-50 rounded-lg shadow-lg space-y-6">
-      <h2 className="text-3xl font-bold text-center">Scheduler</h2>
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto bg-gray-50 rounded-lg shadow-lg space-y-6">
+      <h2 className="text-3xl sm:text-4xl font-bold text-center">Scheduler</h2>
 
-      <div className="grid grid-cols-7 gap-4 text-center text-sm font-bold text-gray-1000">
+      <div className="grid grid-cols-2 sm:grid-cols-7 gap-2 sm:gap-4 text-center text-sm font-bold text-gray-700">
         {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-          <div key={d} className="py-3 bg-gray-100 rounded-md shadow-sm">
+          <div
+            key={d}
+            className="py-2 sm:py-3 bg-gray-100 rounded-md shadow-sm"
+          >
             {d}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-4 text-sm">
-        {printedDays.map(({ dateObj }, index) => {
-          const dateStr = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
-          const dayData = schedule[dateStr] || {};
-          return (
-            <ScheduleCell
-              key={index}
-              dateStr={dateStr}
-              dayData={dayData}
-              handleChange={handleChange}
-              handleConfirm={handleConfirm}
-              handleEdit={handleEdit}
-              employeesList={employeesList}
-            />
-          );
-        })}
+      <div className="overflow-x-auto">
+        <div className="grid grid-cols-2 sm:grid-cols-7 gap-2 sm:gap-4 text-sm">
+          {printedDays.map(({ dateObj }, index) => {
+            const dateStr = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
+            const dayData = schedule[dateStr] || {};
+            return (
+              <ScheduleCell
+                key={index}
+                dateStr={dateStr}
+                dayData={dayData}
+                handleChange={handleChange}
+                handleConfirm={handleConfirm}
+                handleEdit={handleEdit}
+                employeesList={employeesList}
+              />
+            );
+          })}
+        </div>
       </div>
 
-      <div className="w-full mb-4 flex items-center">
-        <div className="ml-auto mt-10">
-          <CaptureTable tableRef={tableRef} />
-        </div>
+      <div className="w-full flex justify-end mt-6">
+        <CaptureTable tableRef={tableRef} />
       </div>
 
       <div
         ref={tableRef}
-        className="w-full overflow-auto border rounded-lg shadow-md bg-white"
+        className="w-full overflow-auto border rounded-lg shadow-md bg-white mt-4"
       >
         <ScheduleTableByEmp employeesList={employeesList} schedule={schedule} />
       </div>
