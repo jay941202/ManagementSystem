@@ -7,15 +7,24 @@ export default function CaptureTable({ tableRef }) {
 
     try {
       const canvas = await html2canvas(tableRef.current);
-      canvas.toBlob(async (blob) => {
+
+      if (navigator.clipboard && navigator.clipboard.write) {
+        const blob = await new Promise((resolve) => canvas.toBlob(resolve));
         if (!blob) return;
         await navigator.clipboard.write([
           new window.ClipboardItem({ "image/png": blob }),
         ]);
         alert("Table copied to clipboard!");
-      });
+      } else {
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png");
+        link.download = "table.png";
+        link.click();
+        alert("Table downloaded as image (Safari fallback)!");
+      }
     } catch (err) {
       console.error("Failed to copy table:", err);
+      alert("Failed to copy/download table. See console for details.");
     }
   };
 

@@ -28,7 +28,7 @@ export default function ScheduleTableByEmp({ employeesList, schedule }) {
 
   const colTemplate = [
     "minmax(140px, 1fr)",
-    ...Array(weekDates.length * 2).fill("minmax(70px, 1fr)"),
+    ...Array(weekDates.length * 2).fill("70px"),
   ].join(" ");
 
   return (

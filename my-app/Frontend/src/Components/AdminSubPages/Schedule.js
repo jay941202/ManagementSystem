@@ -6,6 +6,7 @@ import CaptureTable from "../../Capture/CaptureTable";
 
 export default function Schedule() {
   const tableRef = useRef();
+
   const today = new Date();
   const todayDay = today.getDay();
   const diffToMonday = todayDay === 0 ? -6 : 1 - todayDay;
@@ -29,8 +30,7 @@ export default function Schedule() {
       const res = await API.get("/employee/employeeList", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const activeEmployees = res.data.filter((emp) => emp.Active);
-      setEmployeesList(activeEmployees);
+      setEmployeesList((res.data || []).filter((emp) => emp.Active));
     } catch (error) {
       console.error("Failed to fetch employees", error);
     }
@@ -44,24 +44,18 @@ export default function Schedule() {
       });
 
       const mappedSchedule = {};
-      res.data.forEach((item) => {
-        const dateObj = new Date(item.date);
-        const key = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
-
-        const mapShift = (shiftData) => {
-          if (!shiftData) return { employees: [], scheduleConfirmed: false };
-          return {
-            employees: shiftData.employees.map((e) => e.employee),
-            scheduleConfirmed: shiftData.scheduleConfirmed || false,
-          };
-        };
+      (res.data || []).forEach((item) => {
+        const key = item.date;
+        const mapShift = (shiftData) => ({
+          employees: (shiftData?.employees || []).map((e) => e.employee),
+          scheduleConfirmed: shiftData?.scheduleConfirmed || false,
+        });
 
         mappedSchedule[key] = {
           AM: mapShift(item.AM),
           PM: mapShift(item.PM),
         };
       });
-
       setSchedule(mappedSchedule);
     } catch (err) {
       console.error("Failed to fetch schedule", err);

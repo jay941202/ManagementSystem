@@ -27,9 +27,8 @@ export default function Tip() {
         });
 
         const mappedSchedule = {};
-        res.data.forEach((item) => {
-          const dateObj = new Date(item.date);
-          const key = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
+        (res.data || []).forEach((item) => {
+          const key = item.date;
 
           const mapShift = (shiftData) => ({
             tipTotal: shiftData?.tipTotal ?? null,
