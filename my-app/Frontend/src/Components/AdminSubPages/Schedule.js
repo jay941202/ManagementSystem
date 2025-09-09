@@ -2,11 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import ScheduleCell from "./Scedule Components/ScheduleCell";
 import API from "../../API/api";
 import ScheduleTableByEmp from "./Scedule Components/ScheduleTableByEmp";
-import CaptureTable from "../../Capture/CaptureTable";
 
 export default function Schedule() {
-  const tableRef = useRef();
-
   const today = new Date();
   const todayDay = today.getDay();
   const diffToMonday = todayDay === 0 ? -6 : 1 - todayDay;
@@ -164,11 +161,7 @@ export default function Schedule() {
         </div>
       </div>
 
-      <div className="w-full flex justify-end mt-6">
-        <CaptureTable tableRef={tableRef} />
-      </div>
-
-      <div ref={tableRef} className="w-full overflow-auto mt-4">
+      <div className="w-full overflow-auto mt-2">
         <ScheduleTableByEmp employeesList={employeesList} schedule={schedule} />
       </div>
     </div>

@@ -32,7 +32,7 @@ export default function ScheduleTableByEmp({ employeesList, schedule }) {
   ].join(" ");
 
   return (
-    <div className="inline-block min-w-full border rounded-lg shadow-md bg-white p-4">
+    <div className="inline-block min-w-full border rounded-lg shadow-md bg-white p-4 mt-20">
       <div className="flex flex-col items-center mb-6">
         <h2 className="text-3xl font-bold mb-4 text-center">Schedule Table</h2>
         <div className="flex items-center gap-4">
