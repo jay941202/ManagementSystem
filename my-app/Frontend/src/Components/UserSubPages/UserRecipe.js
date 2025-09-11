@@ -34,14 +34,17 @@ export default function UserRecipe() {
                 <h3 className="text-xl font-bold">{recipe.name}</h3>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 border rounded p-2 bg-white">
+              <div className="grid grid-cols-6 gap-2 mb-4 border rounded p-2 bg-gray-50">
                 {recipe.ingredients.map((ing) => (
                   <React.Fragment key={ing._id}>
-                    <span className="bg-gray-200 rounded px-2 py-1 text-sm">
+                    <span className="col-span-4 bg-gray-200 rounded px-2 py-1 text-sm">
                       {ing.inventoryItem?.name || "No Name"}
                     </span>
-                    <span className="bg-gray-100 rounded px-2 py-1 text-sm text-right">
+                    <span className="col-span-1 bg-gray-100 rounded px-2 py-1 text-sm text-center">
                       {ing.volume || 0}
+                    </span>
+                    <span className="col-span-1 bg-gray-100 rounded px-2 py-1 text-sm text-center">
+                      {ing.unit}
                     </span>
                   </React.Fragment>
                 ))}
