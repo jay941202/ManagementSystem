@@ -28,7 +28,9 @@ export default function CPAEmployeeGrid({
           (1000 * 60 * 60)) *
         emp.hourlyPay;
     }
-
+    console.log(new Date(target.clockOut));
+    console.log(new Date(target.clockIn));
+    console.log(new Date(target.clockOut) - new Date(target.clockIn));
     const totalTipPercentage = shift.employees.reduce(
       (sum, e) => sum + (e.employee?.TipPercentage || 0),
       0

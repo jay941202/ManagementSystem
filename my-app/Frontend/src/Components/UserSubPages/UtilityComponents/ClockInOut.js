@@ -68,7 +68,7 @@ export default function ClockInOut({ workday }) {
 
   useEffect(() => {
     fetchEmployeeToday();
-  }, []);
+  }, [workday]);
 
   const handleConfirm = async (type) => {
     try {

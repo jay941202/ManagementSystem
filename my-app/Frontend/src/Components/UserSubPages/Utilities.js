@@ -3,6 +3,7 @@ import ClockInOut from "./UtilityComponents/ClockInOut";
 import UserCashCount from "./UtilityComponents/UserCashCount";
 import UserRefund from "./UtilityComponents/UserRefund";
 import UnavailableDates from "./UtilityComponents/UnavailableDates";
+import { useState, useEffect } from "react";
 
 export default function Utilities() {
   function getWorkdayStr() {
@@ -12,8 +13,15 @@ export default function Utilities() {
     }
     return `${now.getMonth() + 1}/${now.getDate()}`;
   }
+  const [workdayStr, setWorkdayStr] = useState(getWorkdayStr());
 
-  const workdayStr = getWorkdayStr();
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWorkdayStr(getWorkdayStr());
+    }, 60 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="space-y-8">
