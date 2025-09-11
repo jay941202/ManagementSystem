@@ -42,7 +42,7 @@ export default function UnavailableDates() {
   const handleConfirm = async () => {
     try {
       if (pin.length !== 4) {
-        return alert("전화번호 마지막 4자리를 입력해주세요.");
+        return alert("Enter Last 4 Digits.");
       }
       const targetEmployee = employee.find(
         (e) => e.number.slice(-4) === String(pin)
@@ -100,13 +100,15 @@ export default function UnavailableDates() {
             onChange={handleChange}
             className="border px-4 py-2 rounded-lg"
           />
+        </div>
+        <div>
           <input
             type="text"
             name="reason"
             value={form.reason}
             placeholder="Enter Reason"
             onChange={handleChange}
-            className="border px-4 py-2 rounded-lg ml-3"
+            className="border px-4 py-2 rounded-lg"
           />
         </div>
         <button

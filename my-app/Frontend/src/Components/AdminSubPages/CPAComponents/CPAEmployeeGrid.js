@@ -14,12 +14,12 @@ export default function CPAEmployeeGrid({
   ].join(" ");
 
   const calculateShiftValues = (shift, emp) => {
-    if (!shift?.employees) return { hourly: 0, tip: 0 };
+    if (!shift?.employees) return { hourly: null, tip: null };
 
     const target = shift.employees.find(
       (e) => String(e.employee?._id) === String(emp._id)
     );
-    if (!target) return { hourly: 0, tip: 0 };
+    if (!target) return { hourly: null, tip: null };
 
     let hourly = 0;
     if (target.clockIn && target.clockOut) {
@@ -39,7 +39,10 @@ export default function CPAEmployeeGrid({
         ? (empPercentage / totalTipPercentage) * (shift.tip || 0)
         : 0;
 
-    return { hourly: hourly.toFixed(2), tip: tip.toFixed(2) };
+    return {
+      hourly: Number(hourly.toFixed(2)),
+      tip: tip === 0 ? 0 : Number(tip.toFixed(2)),
+    };
   };
 
   useEffect(() => {
@@ -158,8 +161,20 @@ export default function CPAEmployeeGrid({
                 const { hourly, tip } = calculateShiftValues(shift, emp);
                 return (
                   <React.Fragment key={`${key}-${i}`}>
-                    <div className="border p-1 text-center">{hourly}</div>
-                    <div className="border p-1 text-center">{tip}</div>
+                    <div
+                      className={` border p-1 text-center ${
+                        hourly ? "bg-twohas text-white" : "text-white"
+                      }`}
+                    >
+                      {hourly ?? "-"}
+                    </div>
+                    <div
+                      className={` border p-1 text-center ${
+                        tip ? "bg-twohas text-white" : "text-white"
+                      }`}
+                    >
+                      {tip ?? "-"}
+                    </div>
                   </React.Fragment>
                 );
               });

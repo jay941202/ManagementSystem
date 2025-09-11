@@ -11,14 +11,32 @@ exports.getList = async (req, res) => {
 };
 exports.addInventory = async (req, res) => {
   try {
-    const { name, vendor, volume, price, inStock, updatesByEmp } = req.body;
+    const {
+      name,
+      vendor,
+      volume,
+      price,
+      inStock,
+      updatesByEmp,
+      enough,
+      unit,
+      unitPerCase,
+    } = req.body;
     const existingItem = await Inventory.findOne({ name });
     if (existingItem) {
       return res.status(400).json({ error: "Item already exists" });
     }
-    const parsedVolume = parseFloat(volume);
+    let parsedVolume = parseFloat(volume);
     const parsedPrice = parseFloat(price);
-    const unitPrice = parsedVolume > 0 ? parsedPrice / parsedVolume : 0;
+    if (unit === "Kg" || unit === "L") {
+      parsedVolume = parsedVolume * 1000;
+    }
+    if (unit === "lb") {
+      parsedVolume = parsedVolume * 453.59237;
+    }
+
+    const pricePerEa = unitPerCase > 0 ? parsedPrice / unitPerCase : 0;
+    const unitPrice = parsedVolume > 0 ? pricePerEa / parsedVolume : 0;
     const newInventory = await Inventory.create({
       name,
       vendor,
@@ -27,6 +45,9 @@ exports.addInventory = async (req, res) => {
       unitPrice,
       inStock,
       updatesByEmp,
+      enough,
+      unit,
+      unitPerCase,
     });
     res.json(newInventory);
   } catch (err) {
@@ -43,15 +64,39 @@ exports.updateInventory = async (req, res) => {
       vendor,
       volume,
       price,
-      unitPrice,
       inStock,
       updatesByEmp,
+      enough,
+      unit,
+      unitPerCase,
     } = req.body;
     if (!id)
       return res.status(400).json({ message: "Inventory ID is required" });
+    let parsedVolume = parseFloat(volume);
+    const parsedPrice = parseFloat(price);
+    if (unit === "Kg" || unit === "L") {
+      parsedVolume = parsedVolume * 1000;
+    }
+    if (unit === "lb") {
+      parsedVolume = parsedVolume * 453.59237;
+    }
+
+    const pricePerEa = unitPerCase > 0 ? parsedPrice / unitPerCase : 0;
+    const unitPrice = parsedVolume > 0 ? pricePerEa / parsedVolume : 0;
     const updatedInventory = await Inventory.findByIdAndUpdate(
       id,
-      { name, vendor, volume, price, unitPrice, inStock, updatesByEmp },
+      {
+        name,
+        vendor,
+        volume,
+        price,
+        unitPrice,
+        inStock,
+        updatesByEmp,
+        enough,
+        unit,
+        unitPerCase,
+      },
       { new: true }
     );
     if (!updatedInventory) {

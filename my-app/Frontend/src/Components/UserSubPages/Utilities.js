@@ -29,7 +29,7 @@ export default function Utilities() {
         <UserRefund workday={workdayStr} />
       </div>
       <div className="p-6 bg-white rounded-xl shadow-md border-2 border-gray-300">
-        <UnavailableDates workday={workdayStr} />
+        <UnavailableDates />
       </div>
     </div>
   );

@@ -5,13 +5,20 @@ import CPASummaryGrid from "./CPAComponents/CPASummaryGrid";
 
 export default function CPA() {
   const [employees, setEmployees] = useState([]);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-  const [selectedRange, setSelectedRange] = useState(
-    new Date().getDate() <= 15 ? "1-15" : "16-end"
-  );
   const [scheduleData, setScheduleData] = useState({});
-  const [dateRange, setDateRange] = useState([]);
+  const [startEndDate, setStartEndDate] = useState({
+    startDate: "",
+    endDate: "",
+  });
+  const today = new Date();
+  const initialDateRange = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+    return date;
+  });
+
+  const [dateRange, setDateRange] = useState(initialDateRange);
+
   const [summaryData, setSummaryData] = useState({});
 
   useEffect(() => {
@@ -49,25 +56,24 @@ export default function CPA() {
     fetchEmployees();
   }, []);
 
-  useEffect(() => {
-    const year = selectedYear;
-    const month = selectedMonth;
-    const startDay = selectedRange === "1-15" ? 1 : 16;
-    const endDay =
-      selectedRange === "1-15" ? 15 : new Date(year, month + 1, 0).getDate();
-
-    const dates = [];
-    for (let d = startDay; d <= endDay; d++)
-      dates.push(new Date(year, month, d));
-    setDateRange(dates);
-  }, [selectedYear, selectedMonth, selectedRange]);
-
-  const generateYears = () => {
-    const currentYear = new Date().getFullYear();
-    const years = [];
-    for (let y = currentYear - 2; y <= currentYear; y++) years.push(y);
-    return years;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setStartEndDate((prev) => ({ ...prev, [name]: value }));
   };
+
+  useEffect(() => {
+    if (!startEndDate.startDate || !startEndDate.endDate) return;
+
+    const start = new Date(startEndDate.startDate);
+    const end = new Date(startEndDate.endDate);
+    const dates = [];
+
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      dates.push(new Date(d));
+    }
+
+    setDateRange(dates);
+  }, [startEndDate]);
 
   const employees1099 = employees.filter((emp) => emp.taxReport === "1099");
   const employeesW2 = employees.filter((emp) => emp.taxReport === "W-2");
@@ -76,52 +82,31 @@ export default function CPA() {
     <div className="p-6 max-w-full mx-auto space-y-12">
       <h2 className="text-3xl font-bold mb-6 text-center">CPA</h2>
 
-      <div className="flex gap-4 mb-6">
-        <select
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(Number(e.target.value))}
-          className="border rounded px-3 py-1"
-        >
-          {generateYears().map((y) => (
-            <option key={y} value={y}>
-              {y}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={selectedMonth}
-          onChange={(e) => setSelectedMonth(Number(e.target.value))}
-          className="border rounded px-3 py-1"
-        >
-          {[
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-          ].map((m, idx) => (
-            <option key={idx} value={idx}>
-              {m}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={selectedRange}
-          onChange={(e) => setSelectedRange(e.target.value)}
-          className="border rounded px-3 py-1"
-        >
-          <option value="1-15">1-15</option>
-          <option value="16-end">16-End</option>
-        </select>
+      <div className="flex items-end gap-4 mb-6">
+        <div>
+          <label className="block text-sm font-medium mb-1 text-gray-600">
+            Start Date
+          </label>
+          <input
+            type="date"
+            name="startDate"
+            value={startEndDate.startDate}
+            onChange={handleChange}
+            className="border px-4 py-2 rounded-lg"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1 text-gray-600">
+            End Date
+          </label>
+          <input
+            type="date"
+            name="endDate"
+            value={startEndDate.endDate}
+            onChange={handleChange}
+            className="border px-4 py-2 rounded-lg"
+          />
+        </div>
       </div>
 
       <CPAEmployeeGrid

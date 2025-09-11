@@ -85,6 +85,8 @@ export default function UserCashCount({ workday }) {
       alert("Failed to update CashCount.");
     }
   };
+  const allZero = Object.values(billInputs).every((v) => Number(v) === 0);
+  const hasEmpty = Object.values(billInputs).some((v) => v === "" || v == null);
 
   return (
     <section>
@@ -109,7 +111,12 @@ export default function UserCashCount({ workday }) {
         <div className="flex justify-end">
           <button
             onClick={handleAddCashCount}
-            className="px-5 py-2 bg-twohas text-white rounded-lg shadow hover:bg-twohas/80 font-semibold"
+            disabled={allZero || hasEmpty}
+            className={`px-5 py-2 rounded-lg shadow font-semibold text-white ${
+              allZero || hasEmpty
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-twohas hover:bg-twohas/80"
+            }`}
           >
             Add (${calculateTotal().toFixed(2)})
           </button>

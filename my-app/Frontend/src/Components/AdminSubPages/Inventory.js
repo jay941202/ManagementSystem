@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import API from "../../API/api";
 import InventoryTable from "./InventoryComponents/InventoryTable";
 import InventoryForm from "./InventoryComponents/InventoryForm";
+import TableForShopping from "./InventoryComponents/TableForShopping";
 
 export default function Inventory() {
   const [newInventory, setNewInventory] = useState({
@@ -10,10 +11,14 @@ export default function Inventory() {
     volume: "",
     price: "",
     inStock: "",
-    updatesByEmp: false,
+    updatesByEmp: "",
+    enough: false,
+    unit: "",
+    unitPerCase: 1,
   });
   const [inventoryList, setInventoryList] = useState([]);
-  const [isOn, setIsOn] = useState(false);
+  const [isOn, setIsOn] = useState(true);
+  const [inventoryOnly, setInventoryOnly] = useState(true);
 
   useEffect(() => {
     fetchInventory();
@@ -62,6 +67,7 @@ export default function Inventory() {
   };
 
   const groupedByVendor = inventoryList.reduce((acc, item) => {
+    if (!item.vendor || (isOn && item.enough === true)) return acc;
     if (!acc[item.vendor]) acc[item.vendor] = [];
     acc[item.vendor].push(item);
     return acc;
@@ -75,18 +81,30 @@ export default function Inventory() {
         handleAddInventory={handleAddInventory}
         isOn={isOn}
         setIsOn={setIsOn}
+        inventoryOnly={inventoryOnly}
+        setInventoryOnly={setInventoryOnly}
       />
 
-      {Object.entries(groupedByVendor).map(([vendor, items]) => (
-        <div key={vendor}>
-          <h2 className="text-2xl font-bold mb-4">{vendor}</h2>
-          <InventoryTable
-            inventoryList={items}
-            fetchInventory={fetchInventory}
-            isOn={isOn}
-          />
-        </div>
-      ))}
+      {!inventoryOnly
+        ? Object.entries(groupedByVendor).map(([vendor, items]) => (
+            <div key={vendor}>
+              <h2 className="text-2xl font-bold mb-4">{vendor}</h2>
+              <InventoryTable
+                inventoryList={items}
+                fetchInventory={fetchInventory}
+              />
+            </div>
+          ))
+        : Object.entries(groupedByVendor).map(([vendor, items]) => (
+            <div key={vendor}>
+              <h2 className="text-2xl font-bold mb-4">{vendor}</h2>
+              <TableForShopping
+                inventoryList={items}
+                fetchInventory={fetchInventory}
+                isOn={isOn}
+              />
+            </div>
+          ))}
     </div>
   );
 }

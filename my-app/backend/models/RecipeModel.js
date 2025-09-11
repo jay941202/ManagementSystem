@@ -7,6 +7,7 @@ const ingredientSchema = new mongoose.Schema({
     required: true,
   },
   volume: { type: String, required: true },
+  unit: { type: String, required: true },
 });
 
 const recipeSchema = new mongoose.Schema({

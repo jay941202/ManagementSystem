@@ -10,7 +10,6 @@ export default function UserInventoryForm({
       <h1 className="text-2xl font-bold text-gray-800 text-center">
         Add Inventory
       </h1>
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
         <div className="flex flex-col">
           <label className="text-sm font-medium text-gray-600 mb-1">

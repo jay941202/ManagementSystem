@@ -50,6 +50,7 @@ export default function Recipe() {
         ingredients: selectedIngredients.map((ing) => ({
           inventoryItem: ing.inventoryItem._id,
           volume: ing.volume,
+          unit: ing.unit,
           unitPrice: ing.inventoryItem.unitPrice,
         })),
       };

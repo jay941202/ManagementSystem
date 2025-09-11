@@ -27,8 +27,20 @@ const InventorySchema = new mongoose.Schema(
       default: null,
     },
     updatesByEmp: {
+      type: String,
+      default: null,
+    },
+    enough: {
       type: Boolean,
-      default: true,
+      default: false,
+    },
+    unit: {
+      type: String,
+      default: "",
+    },
+    unitPerCase: {
+      type: Number,
+      default: 1,
     },
   },
   { timestamps: true }

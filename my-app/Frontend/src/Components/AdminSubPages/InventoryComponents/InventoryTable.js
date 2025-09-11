@@ -1,14 +1,9 @@
 import React, { useState } from "react";
 import API from "../../../API/api";
 
-export default function InventoryTable({
-  inventoryList,
-  fetchInventory,
-  isOn,
-}) {
+export default function InventoryTable({ inventoryList, fetchInventory }) {
   const [editingId, setEditingId] = useState(null);
   const [editedInventory, setEditedInventory] = useState(null);
-
   const handleEdit = (emp) => {
     setEditingId(emp._id);
     setEditedInventory(emp);
@@ -45,50 +40,34 @@ export default function InventoryTable({
     }
   };
 
-  const filteredInventory = isOn
-    ? inventoryList.filter((item) => item.updatesByEmp === true)
-    : inventoryList;
-
-  const formattedTime = (timestamp) => {
-    const date = new Date(timestamp);
-    const datePart = date.toLocaleDateString(undefined, {
-      month: "2-digit",
-      day: "2-digit",
-    });
-    return `${datePart}`;
-  };
-
   return (
     <div className="overflow-x-auto rounded-xl shadow">
       <table className="min-w-full table-auto border border-gray-200 bg-white">
         <thead className="bg-gray-100">
           <tr>
-            <th className="px-2 py-2 border-b text-left text-xs sm:text-sm font-semibold text-gray-600 w-10">
-              Item#
-            </th>
-            <th className="px-2 py-2 border-b text-left text-xs sm:text-sm font-semibold text-gray-600 w-32">
+            <th className="px-2 py-2 border-b text-left text-xs sm:text-sm font-semibold text-gray-600 w-20">
               Item
             </th>
-            <th className="px-2 py-2 border-b text-left text-xs sm:text-sm font-semibold text-gray-600 w-32">
+            <th className="px-2 py-2 border-b text-left text-xs sm:text-sm font-semibold text-gray-600 w-28">
               Vendor
             </th>
-            <th className="px-2 py-2 border-b text-left text-xs sm:text-sm font-semibold text-gray-600 w-20">
-              Volume/Pack
+            <th className="px-2 py-2 border-b text-left text-xs sm:text-sm font-semibold text-gray-600 w-16">
+              Volume/EA
+            </th>
+            <th className="px-2 py-2 border-b text-left text-xs sm:text-sm font-semibold text-gray-600 w-16">
+              Unit
+            </th>
+            <th className="px-2 py-2 border-b text-left text-xs sm:text-sm font-semibold text-gray-600 w-16">
+              EA/Case
             </th>
             <th className="px-2 py-2 border-b text-left text-xs sm:text-sm font-semibold text-gray-600 w-20">
-              Pack Price
+              Price
             </th>
             <th className="px-2 py-2 border-b text-left text-xs sm:text-sm font-semibold text-gray-600 w-20">
               Unit Price
             </th>
-            <th className="px-2 py-2 border-b text-left text-xs sm:text-sm font-semibold text-gray-600 w-16">
-              In Stock
-            </th>
-            <th className="px-2 py-2 border-b text-left text-xs sm:text-sm font-semibold text-gray-600 w-16">
-              UBE
-            </th>
-            <th className="px-2 py-2 border-b text-left text-xs sm:text-sm font-semibold text-gray-600 w-16">
-              LastUpdate
+            <th className="px-2 py-2 border-b text-left text-xs sm:text-sm font-semibold text-gray-600 w-20">
+              Updated By
             </th>
             <th className="px-2 py-2 border-b text-center text-xs sm:text-sm font-semibold text-gray-600 w-24">
               Action
@@ -96,16 +75,15 @@ export default function InventoryTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
-          {filteredInventory.length === 0 ? (
+          {inventoryList.length === 0 ? (
             <tr>
               <td colSpan="9" className="text-center py-6 text-gray-400 italic">
                 No items added yet.
               </td>
             </tr>
           ) : (
-            filteredInventory.map((item, index) => (
+            inventoryList.map((item, index) => (
               <tr key={item._id} className="hover:bg-gray-50">
-                <td className="px-2 py-1 text-xs sm:text-sm">{index + 1}</td>
                 <td className="px-2 py-1 text-xs sm:text-sm">
                   {editingId === item._id ? (
                     <input
@@ -135,6 +113,10 @@ export default function InventoryTable({
                       <option value="Aldi">Aldi</option>
                       <option value="Kroger">Kroger</option>
                       <option value="Walmart">Walmart</option>
+                      <option value="Korea">Korea</option>
+                      <option value="Wooltari">Wooltari</option>
+                      <option value="Webstaurant">Webstaurant</option>
+                      <option value="Greentea">Greentea</option>
                     </select>
                   ) : (
                     item.vendor
@@ -153,6 +135,38 @@ export default function InventoryTable({
                 </td>
                 <td className="px-2 py-1 text-xs sm:text-sm">
                   {editingId === item._id ? (
+                    <select
+                      value={editedInventory?.unit || ""}
+                      onChange={(e) => handleChange("unit", e.target.value)}
+                      className="border rounded px-2 py-1 w-full max-w-[120px]"
+                    >
+                      <option value="">Select Unit</option>
+                      <option value="Kg">Kg</option>
+                      <option value="g">g</option>
+                      <option value="L">L</option>
+                      <option value="mL">mL</option>
+                      <option value="ea">ea</option>
+                      <option value="lb">lb</option>
+                    </select>
+                  ) : (
+                    item.unit
+                  )}
+                </td>
+                <td className="px-2 py-1 text-xs sm:text-sm">
+                  {editingId === item._id ? (
+                    <input
+                      value={editedInventory?.unitPerCase || ""}
+                      onChange={(e) =>
+                        handleChange("unitPerCase", e.target.value)
+                      }
+                      className="border rounded px-2 py-1 w-full max-w-[80px]"
+                    />
+                  ) : (
+                    item.unitPerCase
+                  )}
+                </td>
+                <td className="px-2 py-1 text-xs sm:text-sm">
+                  {editingId === item._id ? (
                     <input
                       type="number"
                       value={editedInventory?.price || ""}
@@ -164,39 +178,26 @@ export default function InventoryTable({
                   )}
                 </td>
                 <td className="px-2 py-1 text-xs sm:text-sm">
-                  ${item.unitPrice.toFixed(2)}
-                </td>
-                <td className="px-2 py-1 text-xs sm:text-sm">
-                  {editingId === item._id ? (
-                    <input
-                      type="number"
-                      value={editedInventory?.inStock || ""}
-                      onChange={(e) => handleChange("inStock", e.target.value)}
-                      className="border rounded px-2 py-1 w-full max-w-[60px]"
-                    />
-                  ) : (
-                    item.inStock
-                  )}
+                  {item.unitPrice.toFixed(3)}
                 </td>
                 <td className="px-2 py-1 text-xs sm:text-sm">
                   {editingId === item._id ? (
                     <select
-                      value={editedInventory?.updatesByEmp ? "true" : "false"}
+                      value={editedInventory?.updatesByEmp}
                       onChange={(e) =>
-                        handleChange("updatesByEmp", e.target.value === "true")
+                        handleChange("updatesByEmp", e.target.value)
                       }
-                      className="border rounded px-2 py-1 w-full max-w-[60px]"
+                      className="border rounded px-2 py-1 w-full max-w-[120px]"
                     >
-                      <option value="true">Yes</option>
-                      <option value="false">No</option>
+                      <option value="">Updates by</option>
+                      <option value="Kitchen">Kitchen</option>
+                      <option value="Staff">Staff</option>
+                      <option value="No">No</option>
                     </select>
-                  ) : item.updatesByEmp ? (
-                    "Yes"
                   ) : (
-                    "No"
+                    item.updatesByEmp
                   )}
                 </td>
-                <td>{formattedTime(item.updatedAt)}</td>
 
                 <td className="px-2 py-1 flex justify-center gap-2">
                   {editingId === item._id ? (

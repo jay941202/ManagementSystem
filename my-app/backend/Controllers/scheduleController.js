@@ -25,16 +25,23 @@ exports.confirmShift = async (req, res) => {
 };
 exports.getScheduleList = async (req, res) => {
   try {
-    const schedules = await Schedule.find()
+    const latest100 = await Schedule.find()
+      .sort({ timestamp: -1 })
+      .limit(100)
       .populate("AM.employees.employee", "name TipPercentage Active number")
       .populate("PM.employees.employee", "name TipPercentage Active number");
 
-    res.json(schedules);
+    await Schedule.deleteMany({
+      _id: { $nin: latest100.map((s) => s._id) },
+    });
+
+    res.json(latest100);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch schedules" });
   }
 };
+
 exports.confirmTip = async (req, res) => {
   try {
     const { date, shift, tipTotal } = req.body;

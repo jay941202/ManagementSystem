@@ -14,7 +14,9 @@ export default function RecipeTable({
     setEditingId(recipe._id);
     setEditedRecipe(recipe);
   };
-
+  const sortedList = ingredientsList.sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -61,6 +63,7 @@ export default function RecipeTable({
         ingredients: editedRecipe.ingredients.map((ing) => ({
           inventoryItem: ing.inventoryItem._id,
           volume: ing.volume,
+          unit: ing.unit,
         })),
         addToInventory: editedRecipe.addToInventory || false,
       };
@@ -99,7 +102,7 @@ export default function RecipeTable({
       console.error("Inventory update failed:", error);
     }
   };
-
+  console.log(sortedList);
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {recipes.map((recipe) => (
@@ -129,7 +132,10 @@ export default function RecipeTable({
               />
               <div className="grid gap-3 mb-3">
                 {editedRecipe.ingredients.map((ing) => (
-                  <div key={ing._id} className="flex gap-2 items-center">
+                  <div
+                    key={ing._id}
+                    className="grid grid-cols-[2fr_1fr_1fr] gap-2 items-center mb-2"
+                  >
                     <select
                       value={ing.inventoryItem?._id || ""}
                       onChange={(e) => {
@@ -142,15 +148,16 @@ export default function RecipeTable({
                           selectedItem
                         );
                       }}
-                      className="border px-2 py-1 rounded flex-1"
+                      className="border px-2 py-1 rounded w-full"
                     >
                       <option value="">Select ingredient</option>
-                      {ingredientsList.map((item) => (
+                      {sortedList.map((item) => (
                         <option key={item._id} value={item._id}>
                           {item.name}
                         </option>
                       ))}
                     </select>
+
                     <input
                       value={ing.volume || ""}
                       onChange={(e) =>
@@ -160,9 +167,22 @@ export default function RecipeTable({
                           e.target.value
                         )
                       }
-                      className="border px-2 py-1 rounded w-20"
+                      className="border px-2 py-1 rounded w-full"
                       placeholder="Vol"
                     />
+
+                    <select
+                      value={ing.unit || ""}
+                      onChange={(e) =>
+                        handleIngredientChange(ing._id, "unit", e.target.value)
+                      }
+                      className="border px-2 py-1 rounded w-full"
+                    >
+                      <option value="">Unit</option>
+                      <option value="g">g</option>
+                      <option value="mL">mL</option>
+                      <option value="ea">ea</option>
+                    </select>
                   </div>
                 ))}
               </div>
@@ -219,14 +239,17 @@ export default function RecipeTable({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 mb-4 border rounded p-2 bg-gray-50">
+              <div className="grid grid-cols-6 gap-2 mb-4 border rounded p-2 bg-gray-50">
                 {recipe.ingredients.map((ing) => (
                   <React.Fragment key={ing._id}>
-                    <span className="bg-gray-200 rounded px-2 py-1 text-sm">
+                    <span className="col-span-4 bg-gray-200 rounded px-2 py-1 text-sm">
                       {ing.inventoryItem?.name || "No Name"}
                     </span>
-                    <span className="bg-gray-100 rounded px-2 py-1 text-sm text-right">
+                    <span className="col-span-1 bg-gray-100 rounded px-2 py-1 text-sm text-center">
                       {ing.volume || 0}
+                    </span>
+                    <span className="col-span-1 bg-gray-100 rounded px-2 py-1 text-sm text-center">
+                      {ing.unit}
                     </span>
                   </React.Fragment>
                 ))}

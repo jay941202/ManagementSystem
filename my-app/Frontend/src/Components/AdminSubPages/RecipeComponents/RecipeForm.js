@@ -4,11 +4,13 @@ export default function RecipeForm({ ingredientsList, handleSubmit }) {
   const [retailPrice, setRetailPrice] = useState(0);
   const [name, setName] = useState("");
   const [ingredients, setIngredients] = useState([
-    { name: "", volume: "" },
-    { name: "", volume: "" },
-    { name: "", volume: "" },
+    { name: "", volume: "", unit: "" },
+    { name: "", volume: "", unit: "" },
+    { name: "", volume: "", unit: "" },
   ]);
-
+  const sortedList = ingredientsList.sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
   const handleIngredientChange = (index, field, value) => {
     const updated = [...ingredients];
     updated[index][field] = value;
@@ -16,7 +18,7 @@ export default function RecipeForm({ ingredientsList, handleSubmit }) {
   };
 
   const addIngredientField = () => {
-    setIngredients([...ingredients, { name: "", volume: "" }]);
+    setIngredients([...ingredients, { name: "", volume: "", unit: "" }]);
   };
 
   const onSubmit = (e) => {
@@ -26,9 +28,9 @@ export default function RecipeForm({ ingredientsList, handleSubmit }) {
     setRetailPrice(0);
     setName("");
     setIngredients([
-      { name: "", volume: "" },
-      { name: "", volume: "" },
-      { name: "", volume: "" },
+      { name: "", volume: "", unit: "" },
+      { name: "", volume: "", unit: "" },
+      { name: "", volume: "", unit: "" },
     ]);
   };
 
@@ -75,12 +77,12 @@ export default function RecipeForm({ ingredientsList, handleSubmit }) {
                 const selectedItem = ingredientsList.find(
                   (item) => item._id === e.target.value
                 );
-                handleIngredientChange(i, "inventoryItem", selectedItem); // 전체 객체 저장
+                handleIngredientChange(i, "inventoryItem", selectedItem);
               }}
               className="border px-3 py-2 rounded flex-1"
             >
               <option value="">Select Ingredient</option>
-              {ingredientsList.map((inv) => (
+              {sortedList.map((inv) => (
                 <option key={inv._id} value={inv._id}>
                   {inv.name}
                 </option>
@@ -94,6 +96,18 @@ export default function RecipeForm({ ingredientsList, handleSubmit }) {
               placeholder="Volume"
               className="border px-3 py-2 w-32 rounded"
             />
+            <select
+              value={ing.unit}
+              onChange={(e) =>
+                handleIngredientChange(i, "unit", e.target.value)
+              }
+              className="border px-3 py-2 rounded"
+            >
+              <option value="">Select Unit</option>
+              <option value="g">g</option>
+              <option value="mL">mL</option>
+              <option value="ea">ea</option>
+            </select>
           </div>
         ))}
 
