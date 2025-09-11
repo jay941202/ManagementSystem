@@ -82,7 +82,7 @@ export default function UserInventoryTable({ inventoryList, fetchInventory }) {
                   {editingId === item._id ? (
                     <input
                       type="number"
-                      value={editedInventory.inStock || item.inStock}
+                      value={editedInventory.inStock || ""}
                       onChange={(e) => handleChange(e.target.value)}
                       className="border rounded px-3 py-1 w-20 focus:outline-none text-black focus:ring-2 focus:ring-blue-400"
                     />

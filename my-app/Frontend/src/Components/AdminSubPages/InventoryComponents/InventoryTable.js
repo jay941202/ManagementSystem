@@ -116,7 +116,7 @@ export default function InventoryTable({ inventoryList, fetchInventory }) {
                       <option value="Korea">Korea</option>
                       <option value="Wooltari">Wooltari</option>
                       <option value="Webstaurant">Webstaurant</option>
-                      <option value="Greentea">Greentea</option>
+                      <option value="JFC">JFC</option>
                     </select>
                   ) : (
                     item.vendor
