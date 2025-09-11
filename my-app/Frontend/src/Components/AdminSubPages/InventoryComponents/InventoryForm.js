@@ -136,7 +136,7 @@ export default function InventoryForm({
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">
-                Enough
+                Need Purchase?
               </label>
               <select
                 value={newInventory.enough}
@@ -146,8 +146,8 @@ export default function InventoryForm({
                 className="border text-gray-600 px-3 py-2 rounded w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
               >
                 <option value="">Need Purchase?</option>
-                <option value="true">Yes</option>
-                <option value="false">No</option>
+                <option value="false">Yes</option>
+                <option value="true">No</option>
               </select>
             </div>
           </div>
@@ -159,7 +159,7 @@ export default function InventoryForm({
               </label>
               <input
                 type="number"
-                placeholder="Ex: 24"
+                placeholder="Ex: 1kg/pack"
                 value={newInventory.volume}
                 onChange={(e) =>
                   setNewInventory({ ...newInventory, volume: e.target.value })
