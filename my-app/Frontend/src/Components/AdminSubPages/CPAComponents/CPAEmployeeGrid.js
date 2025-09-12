@@ -42,6 +42,7 @@ export default function CPAEmployeeGrid({
     return {
       hourly: Number(hourly.toFixed(2)),
       tip: Number(tip.toFixed(2)),
+      hoursWorked: Number(hoursWorked.toFixed(2)),
     };
   };
 
@@ -51,6 +52,7 @@ export default function CPAEmployeeGrid({
       let totalDays = 0;
       let totalHourly = 0;
       let totalTip = 0;
+      let totalHours = 0;
 
       dateRange.forEach((key) => {
         const shifts = [
@@ -64,17 +66,21 @@ export default function CPAEmployeeGrid({
           );
           if (target) {
             totalDays += 1;
-            const { hourly, tip } = calculateShiftValues(shift, emp);
+            const { hourly, tip, hoursWorked } = calculateShiftValues(
+              shift,
+              emp
+            );
             totalHourly += hourly;
             totalTip += tip;
+            hoursWorked && (totalHours += hoursWorked);
           }
         });
       });
-
       summary[emp._id] = {
         totalDays,
-        totalHourly: totalHourly.toFixed(2),
-        totalTip: totalTip.toFixed(2),
+        totalHourly,
+        totalTip,
+        totalHours,
       };
     });
 

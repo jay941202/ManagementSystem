@@ -135,6 +135,10 @@ export default function CPA() {
         <h3 className="text-xl font-bold mb-2">W-2 Employees Summary</h3>
         <CPASummaryGrid employees={employeesW2} summaryData={summaryData} />
       </div>
+      <div>
+        <h3 className="text-xl font-bold mb-2">All Employees</h3>
+        <CPASummaryGrid employees={employees} summaryData={summaryData} />
+      </div>
     </div>
   );
 }
