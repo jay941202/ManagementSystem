@@ -10,15 +10,18 @@ export default function CPA() {
     startDate: "",
     endDate: "",
   });
+
   const today = new Date();
-  const initialDateRange = Array.from({ length: 7 }, (_, i) => {
+  const todayDay = today.getDay();
+  const diffToMonday = todayDay === 0 ? -6 : 1 - todayDay;
+  const formatDate = (date) => `${date.getMonth() + 1}/${date.getDate()}`;
+  const initialDateRange = Array.from({ length: 6 }, (_, i) => {
     const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    return date;
+    date.setDate(today.getDate() + i + diffToMonday);
+    return formatDate(date);
   });
 
   const [dateRange, setDateRange] = useState(initialDateRange);
-
   const [summaryData, setSummaryData] = useState({});
 
   useEffect(() => {
@@ -33,10 +36,10 @@ export default function CPA() {
         const scheduleRes = await API.get("/schedule/tipList", {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         const mappedSchedule = {};
         scheduleRes.data.forEach((item) => {
-          const dateObj = new Date(item.date);
-          const key = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
+          const key = item.date;
           mappedSchedule[key] = {
             AM: {
               employees: item.AM?.employees || [],
@@ -48,11 +51,13 @@ export default function CPA() {
             },
           };
         });
+
         setScheduleData(mappedSchedule);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching data:", err);
       }
     };
+
     fetchEmployees();
   }, []);
 
@@ -64,12 +69,17 @@ export default function CPA() {
   useEffect(() => {
     if (!startEndDate.startDate || !startEndDate.endDate) return;
 
-    const start = new Date(startEndDate.startDate);
-    const end = new Date(startEndDate.endDate);
-    const dates = [];
+    const parseDate = (str) => {
+      const [year, month, day] = str.split("-").map(Number);
+      return new Date(year, month - 1, day);
+    };
 
+    const start = parseDate(startEndDate.startDate);
+    const end = parseDate(startEndDate.endDate);
+
+    const dates = [];
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      dates.push(new Date(d));
+      dates.push(formatDate(new Date(d)));
     }
 
     setDateRange(dates);

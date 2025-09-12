@@ -14,23 +14,21 @@ export default function CPAEmployeeGrid({
   ].join(" ");
 
   const calculateShiftValues = (shift, emp) => {
-    if (!shift?.employees) return { hourly: null, tip: null };
+    if (!shift?.employees) return { hourly: 0, tip: 0 };
 
     const target = shift.employees.find(
       (e) => String(e.employee?._id) === String(emp._id)
     );
-    if (!target) return { hourly: null, tip: null };
+    if (!target || !target.clockIn || !target.clockOut)
+      return { hourly: 0, tip: 0 };
 
-    let hourly = 0;
-    if (target.clockIn && target.clockOut) {
-      hourly =
-        ((new Date(target.clockOut) - new Date(target.clockIn)) /
-          (1000 * 60 * 60)) *
-        emp.hourlyPay;
-    }
-    console.log(new Date(target.clockOut));
-    console.log(new Date(target.clockIn));
-    console.log(new Date(target.clockOut) - new Date(target.clockIn));
+    const clockIn = new Date(target.clockIn);
+    const clockOut = new Date(target.clockOut);
+    if (isNaN(clockIn) || isNaN(clockOut)) return { hourly: 0, tip: 0 };
+
+    const hoursWorked = (clockOut - clockIn) / (1000 * 60 * 60);
+    const hourly = hoursWorked * emp.hourlyPay;
+
     const totalTipPercentage = shift.employees.reduce(
       (sum, e) => sum + (e.employee?.TipPercentage || 0),
       0
@@ -43,7 +41,7 @@ export default function CPAEmployeeGrid({
 
     return {
       hourly: Number(hourly.toFixed(2)),
-      tip: tip === 0 ? 0 : Number(tip.toFixed(2)),
+      tip: Number(tip.toFixed(2)),
     };
   };
 
@@ -54,22 +52,21 @@ export default function CPAEmployeeGrid({
       let totalHourly = 0;
       let totalTip = 0;
 
-      dateRange.forEach((date) => {
-        const key = `${date.getMonth() + 1}/${date.getDate()}`;
+      dateRange.forEach((key) => {
         const shifts = [
-          scheduleData[key]?.AM || {},
-          scheduleData[key]?.PM || {},
+          scheduleData[key]?.AM || { employees: [], tip: 0 },
+          scheduleData[key]?.PM || { employees: [], tip: 0 },
         ];
 
         shifts.forEach((shift) => {
-          const target = shift.employees?.find(
+          const target = shift.employees.find(
             (e) => String(e.employee?._id) === String(emp._id)
           );
           if (target) {
             totalDays += 1;
             const { hourly, tip } = calculateShiftValues(shift, emp);
-            totalHourly += parseFloat(hourly);
-            totalTip += parseFloat(tip);
+            totalHourly += hourly;
+            totalTip += tip;
           }
         });
       });
@@ -98,17 +95,17 @@ export default function CPAEmployeeGrid({
           Tax Report
         </div>
 
-        {dateRange.map((date) => (
+        {dateRange.map((key) => (
           <div
-            key={date}
+            key={key}
             className="border p-1 text-center font-semibold col-span-4"
           >
-            {`${date.getMonth() + 1}/${date.getDate()}`}
+            {key}
           </div>
         ))}
 
         {dateRange.map((_, idx) => (
-          <React.Fragment key={idx}>
+          <React.Fragment key={`open-close-${idx}`}>
             <div className="border text-center col-span-2 flex items-center justify-center">
               Open
             </div>
@@ -119,7 +116,7 @@ export default function CPAEmployeeGrid({
         ))}
 
         {dateRange.map((_, idx) => (
-          <React.Fragment key={idx}>
+          <React.Fragment key={`hourly-tip-${idx}`}>
             <div className="border text-center flex items-center justify-center">
               Hourly
             </div>
@@ -152,11 +149,10 @@ export default function CPAEmployeeGrid({
               {emp.taxReport || "W-2"}
             </div>
 
-            {dateRange.map((date) => {
-              const key = `${date.getMonth() + 1}/${date.getDate()}`;
+            {dateRange.map((key) => {
               const shifts = [
-                scheduleData[key]?.AM || {},
-                scheduleData[key]?.PM || {},
+                scheduleData[key]?.AM || { employees: [], tip: 0 },
+                scheduleData[key]?.PM || { employees: [], tip: 0 },
               ];
 
               return shifts.map((shift, i) => {
@@ -164,18 +160,18 @@ export default function CPAEmployeeGrid({
                 return (
                   <React.Fragment key={`${key}-${i}`}>
                     <div
-                      className={` border p-1 text-center ${
+                      className={`border p-1 text-center ${
                         hourly ? "bg-twohas text-white" : "text-white"
                       }`}
                     >
-                      {hourly ?? "-"}
+                      {hourly || "-"}
                     </div>
                     <div
-                      className={` border p-1 text-center ${
+                      className={`border p-1 text-center ${
                         tip ? "bg-twohas text-white" : "text-white"
                       }`}
                     >
-                      {tip ?? "-"}
+                      {tip || "-"}
                     </div>
                   </React.Fragment>
                 );
