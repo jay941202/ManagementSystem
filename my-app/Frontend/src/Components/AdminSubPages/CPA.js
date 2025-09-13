@@ -15,7 +15,7 @@ export default function CPA() {
   const todayDay = today.getDay();
   const diffToMonday = todayDay === 0 ? -6 : 1 - todayDay;
   const formatDate = (date) => `${date.getMonth() + 1}/${date.getDate()}`;
-  const initialDateRange = Array.from({ length: 6 }, (_, i) => {
+  const initialDateRange = Array.from({ length: 7 }, (_, i) => {
     const date = new Date(today);
     date.setDate(today.getDate() + i + diffToMonday);
     return formatDate(date);

@@ -75,8 +75,12 @@ export default function CPASummaryGrid({ employees, summaryData }) {
         <div className="border p-2 text-center">Total</div>
         <div className="border p-2 text-center">-</div>
         <div className="border p-2 text-center">{totals.totalDays}</div>
-        <div className="border p-2 text-center">{totals.totalHourly}</div>
-        <div className="border p-2 text-center">{totals.totalTip}</div>
+        <div className="border p-2 text-center">
+          {totals.totalHourly.toFixed(2)}
+        </div>
+        <div className="border p-2 text-center">
+          {totals.totalTip.toFixed(2)}
+        </div>
         <div className="border p-2 text-center">
           {totals.grandTotal.toFixed(2)}
         </div>

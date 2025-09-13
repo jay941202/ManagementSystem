@@ -2,9 +2,9 @@ const User = require("../models/userModel");
 
 exports.getAllEmployees = async (req, res) => {
   try {
-    const employees = await User.find({ role: { $ne: "admin" } }).select(
-      "-password"
-    );
+    const employees = await User.find({ role: { $ne: "admin" } })
+      .select("-password")
+      .sort({ StartDate: 1 });
     res.json(employees);
   } catch (error) {
     console.error(error);

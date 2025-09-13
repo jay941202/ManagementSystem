@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import ScheduleCell from "./Scedule Components/ScheduleCell";
 import API from "../../API/api";
 import ScheduleTableByEmp from "./Scedule Components/ScheduleTableByEmp";
@@ -116,7 +116,7 @@ export default function Schedule() {
         clockOut: null,
       }));
 
-      await API.post(
+      await API.put(
         "/schedule/confirm",
         { date: dateStr, shift, employees: formattedEmployees },
         { headers: { Authorization: `Bearer ${token}` } }

@@ -8,11 +8,28 @@ exports.confirmShift = async (req, res) => {
     if (!schedule) {
       schedule = new Schedule({ date });
     }
-    const existingShift = schedule[shift] || {};
+
+    const existingShift = schedule[shift] || {
+      employees: [],
+      scheduleConfirmed: false,
+    };
+
+    const existingMap = {};
+    (existingShift.employees || []).forEach((emp) => {
+      existingMap[emp.employee.toString()] = emp;
+    });
+
+    const mergedEmployees = employees.map((emp) => {
+      if (existingMap[emp.employee]) {
+        return existingMap[emp.employee];
+      } else {
+        return { ...emp, clockIn: null, clockOut: null };
+      }
+    });
 
     schedule[shift] = {
       ...existingShift,
-      employees,
+      employees: mergedEmployees,
       scheduleConfirmed: true,
     };
 
@@ -23,6 +40,7 @@ exports.confirmShift = async (req, res) => {
     res.status(500).json({ error: "Failed to confirm shift" });
   }
 };
+
 exports.getScheduleList = async (req, res) => {
   try {
     const latest100 = await Schedule.find()
