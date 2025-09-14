@@ -18,11 +18,12 @@ export default function CPASummaryGrid({ employees, summaryData }) {
 
   return (
     <div className="overflow-auto border rounded">
-      <div className="grid grid-cols-7 auto-rows-min border-b">
+      <div className="grid grid-cols-8 auto-rows-min border-b">
         <div className="border p-2 font-bold text-center">Name</div>
         <div className="border p-2 font-bold text-center">Hourly</div>
         <div className="border p-2 font-bold text-center">Total Shifts</div>
-        <div className="border p-2 font-bold text-center">Total Hourly</div>
+        <div className="border p-2 font-bold text-center">Total Hours</div>
+        <div className="border p-2 font-bold text-center">T. Hourly Pay</div>
         <div className="border p-2 font-bold text-center">Total Tip</div>
         <div className="border p-2 font-bold text-center">Grand Total</div>
         <div className="border p-2 font-bold text-center">Hourly Avg</div>
@@ -42,39 +43,46 @@ export default function CPASummaryGrid({ employees, summaryData }) {
         .map((emp) => (
           <div
             key={emp._id}
-            className="grid grid-cols-7 auto-rows-min border-t"
+            className="grid grid-cols-8 auto-rows-min border-t"
           >
             <div className="border p-2 text-center">{emp.name}</div>
-            <div className="border p-2 text-center">{emp.hourlyPay}</div>
+            <div className="border p-2 text-center">${emp.hourlyPay}</div>
             <div className="border p-2 text-center">
               {summaryData[emp._id]?.totalDays || 0}
             </div>
             <div className="border p-2 text-center">
-              {summaryData[emp._id]?.totalHourly.toFixed(2) || 0}
+              {summaryData[emp._id]?.totalHours.toFixed(2) || 0}h
             </div>
             <div className="border p-2 text-center">
-              {summaryData[emp._id]?.totalTip.toFixed(2) || 0}
+              ${summaryData[emp._id]?.totalHourly.toFixed(2) || 0}
             </div>
             <div className="border p-2 text-center">
+              ${summaryData[emp._id]?.totalTip.toFixed(2) || 0}
+            </div>
+            <div className="border p-2 text-center">
+              $
               {(
                 Number(summaryData[emp._id]?.totalTip || 0) +
                 Number(summaryData[emp._id]?.totalHourly || 0)
               ).toFixed(2)}
             </div>
             <div className="border p-2 text-center">
+              $
               {(
                 (Number(summaryData[emp._id]?.totalTip || 0) +
                   Number(summaryData[emp._id]?.totalHourly || 0)) /
                 (Number(summaryData[emp._id]?.totalHours) || 1)
               ).toFixed(2)}
+              /h
             </div>
           </div>
         ))}
 
-      <div className="grid grid-cols-7 auto-rows-min border-t font-bold bg-gray-100">
+      <div className="grid grid-cols-8 auto-rows-min border-t font-bold bg-gray-100">
         <div className="border p-2 text-center">Total</div>
         <div className="border p-2 text-center">-</div>
         <div className="border p-2 text-center">{totals.totalDays}</div>
+        <div className="border p-2 text-center">-</div>
         <div className="border p-2 text-center">
           {totals.totalHourly.toFixed(2)}
         </div>
