@@ -109,6 +109,7 @@ exports.clockInOut = async (req, res) => {
     const targetEmployee = employees.find(
       (e) => e.employee._id.toString() === employeeId
     );
+
     if (!targetEmployee)
       return res.status(404).json({ error: "Employee not found" });
 
