@@ -87,13 +87,9 @@ exports.confirmTip = async (req, res) => {
 
 exports.clockInOut = async (req, res) => {
   function getWorkday(date = new Date()) {
-    const d = new Date(date);
-    if (d.getHours() < 3) {
-      d.setDate(d.getDate() - 1);
-    }
-    const month = (d.getMonth() + 1).toString();
-    const day = d.getDate().toString();
-    return `${month}/${day}`;
+    const d = new Date(date.getTime() - 4 * 60 * 60 * 1000);
+    if (d.getHours() < 3) d.setDate(d.getDate() - 1);
+    return `${d.getMonth() + 1}/${d.getDate()}`;
   }
 
   try {
