@@ -99,7 +99,10 @@ exports.clockInOut = async (req, res) => {
   try {
     const { shift, employeeId, type } = req.body;
     const workday = getWorkday();
-    const schedule = await Schedule.findOne({ date: workday });
+    const schedule = await Schedule.findOne({ date: workday })
+      .populate("AM.employees.employee", "name TipPercentage Active number")
+      .populate("PM.employees.employee", "name TipPercentage Active number");
+
     if (!schedule) return res.status(404).json({ error: "Schedule not found" });
 
     const employees = schedule[shift]?.employees || [];
