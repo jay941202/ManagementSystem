@@ -263,14 +263,20 @@ export default function ClosingSummary() {
                     <td className="px-2 py-1 text-sm">{emp.name}</td>
                     <td className="px-2 py-1 text-sm">
                       {ud.startDate
-                        ? new Date(ud.startDate).toLocaleDateString("en-US")
+                        ? new Date(
+                            new Date(ud.startDate).getTime() +
+                              24 * 60 * 60 * 1000
+                          ).toLocaleDateString("en-US")
                         : ""}
                     </td>
                     <td className="px-2 py-1 text-sm">
                       {ud.endDate
-                        ? new Date(ud.endDate).toLocaleDateString("en-US")
+                        ? new Date(
+                            new Date(ud.endDate).getTime() + 24 * 60 * 60 * 1000
+                          ).toLocaleDateString("en-US")
                         : ""}
                     </td>
+
                     <td className="px-2 py-1 text-sm">{ud.reason}</td>
                   </tr>
                 ))
