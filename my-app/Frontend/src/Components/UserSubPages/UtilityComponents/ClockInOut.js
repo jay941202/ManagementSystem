@@ -43,7 +43,6 @@ export default function ClockInOut({ workday }) {
       );
 
       setTodayEmployees(employees);
-
       const logs = employees.flatMap((e) => {
         const arr = [];
         if (e.clockIn)
@@ -79,12 +78,11 @@ export default function ClockInOut({ workday }) {
       if (!targetEmployee) return alert("PIN Not Matched");
 
       const payload = {
-        date: targetEmployee.date,
         shift: targetEmployee.shift,
         employeeId: targetEmployee.employee._id,
         type,
       };
-
+      console.log(payload);
       const clockRes = await API.put("/schedule/clockInOut", payload, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });

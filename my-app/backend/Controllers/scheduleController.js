@@ -86,28 +86,40 @@ exports.confirmTip = async (req, res) => {
 };
 
 exports.clockInOut = async (req, res) => {
+  function getWorkday(date = new Date()) {
+    const d = new Date(date);
+    if (d.getHours() < 3) {
+      d.setDate(d.getDate() - 1);
+    }
+    const month = (d.getMonth() + 1).toString();
+    const day = d.getDate().toString();
+    return `${month}/${day}`;
+  }
+
   try {
-    const { date, shift, employeeId, type } = req.body;
-    const schedule = await Schedule.findOne({ date });
+    const { shift, employeeId, type } = req.body;
+    const workday = getWorkday();
+    const schedule = await Schedule.findOne({ date: workday });
     if (!schedule) return res.status(404).json({ error: "Schedule not found" });
 
     const employees = schedule[shift]?.employees || [];
     const targetEmployee = employees.find(
       (e) => e.employee._id.toString() === employeeId
     );
-
     if (!targetEmployee)
       return res.status(404).json({ error: "Employee not found" });
 
-    if (type === "Clock In") targetEmployee.clockIn = new Date();
-    if (type === "Clock Out") targetEmployee.clockOut = new Date();
+    const now = new Date();
+    if (type === "Clock In") targetEmployee.clockIn = now;
+    if (type === "Clock Out") targetEmployee.clockOut = now;
 
     await schedule.save();
+
     res.json({
       employee: targetEmployee.employee.name,
       type,
-      time:
-        type === "Clock In" ? targetEmployee.clockIn : targetEmployee.clockOut,
+      time: now,
+      workday,
     });
   } catch (err) {
     console.error(err);
