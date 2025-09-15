@@ -38,7 +38,10 @@ export default function UserInventory() {
         ...newInventory,
         volume: Number(newInventory.volume) || 0,
         price: Number(newInventory.price) || 0,
+        enough: true,
+        updatesByEmp: isOn ? "Staff" : "Kitchen",
       };
+
       const token = localStorage.getItem("token");
       await API.post("/inventory/addInventory", payload, {
         headers: { Authorization: `Bearer ${token}` },
