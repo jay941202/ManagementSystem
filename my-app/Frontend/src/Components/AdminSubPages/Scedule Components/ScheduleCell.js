@@ -50,7 +50,7 @@ export default function ScheduleCell({
                 onClick={() => handleConfirm(dateStr, shift)}
                 disabled={shiftData.employees.length === 0}
                 className={`mt-1 text-xs rounded px-3 py-1 ${
-                  shiftData.employees.length === 0
+                  shiftData.employees.length === 0 && shiftData
                     ? "bg-gray-300 text-gray-600 cursor-not-allowed"
                     : "bg-twohas text-white hover:brightness-110"
                 }`}

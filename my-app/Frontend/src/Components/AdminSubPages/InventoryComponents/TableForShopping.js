@@ -125,7 +125,7 @@ export default function TableForShopping({
                   {editingId === item._id ? (
                     <input
                       type="number"
-                      value={editedInventory?.inStock || item.inStock}
+                      value={editedInventory?.inStock || ""}
                       onChange={(e) => handleChange("inStock", e.target.value)}
                       className="border rounded px-2 py-1 w-full max-w-[60px]"
                     />
@@ -158,7 +158,7 @@ export default function TableForShopping({
                   {editingId === item._id ? (
                     <input
                       type="number"
-                      value={editedInventory?.price || item.price}
+                      value={editedInventory?.price || ""}
                       onChange={(e) => handleChange("price", e.target.value)}
                       className="border rounded px-2 py-1 w-full max-w-[80px]"
                     />
