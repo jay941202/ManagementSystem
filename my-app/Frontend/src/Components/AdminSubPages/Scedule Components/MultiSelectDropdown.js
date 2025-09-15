@@ -6,6 +6,7 @@ export default function MultiSelectDropdown({
   onChange,
   disabled,
   selectedDate,
+  isConfirmed,
 }) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef();
@@ -43,7 +44,9 @@ export default function MultiSelectDropdown({
         }`}
       >
         {selected.length === 0
-          ? "Select Employees"
+          ? isConfirmed
+            ? "None selected"
+            : "Select Employees"
           : selected.map((emp) => emp.name).join(", ")}
       </button>
 

@@ -37,6 +37,7 @@ export default function ScheduleCell({
               onChange={(selected) => handleChange(dateStr, shift, selected)}
               disabled={isConfirmed}
               selectedDate={new Date(dateStr)}
+              isConfirmed={isConfirmed}
             />
             {isConfirmed ? (
               <button
@@ -48,10 +49,9 @@ export default function ScheduleCell({
             ) : (
               <button
                 onClick={() => handleConfirm(dateStr, shift)}
-                disabled={shiftData.employees.length === 0}
                 className={`mt-1 text-xs rounded px-3 py-1 ${
                   shiftData.employees.length === 0 && shiftData
-                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                    ? "bg-gray-300 text-gray-600"
                     : "bg-twohas text-white hover:brightness-110"
                 }`}
               >
