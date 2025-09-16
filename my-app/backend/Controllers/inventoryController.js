@@ -78,15 +78,18 @@ exports.updateInventory = async (req, res) => {
       return res.status(400).json({ message: "Inventory ID is required" });
     let parsedVolume = parseFloat(volume);
     const parsedPrice = parseFloat(price);
+    let volumeFactor = 1;
+
     if (unit === "Kg" || unit === "L") {
-      parsedVolume = parsedVolume * 1000;
+      volumeFactor = 1000;
     }
     if (unit === "lb") {
-      parsedVolume = parsedVolume * 453.59237;
+      volumeFactor = 453.59237;
     }
 
     const pricePerEa = unitPerCase > 0 ? parsedPrice / unitPerCase : 0;
-    const unitPrice = parsedVolume > 0 ? pricePerEa / parsedVolume : 0;
+    const unitPrice =
+      parsedVolume > 0 ? pricePerEa / (parsedVolume * volumeFactor) : 0;
     const updatedInventory = await Inventory.findByIdAndUpdate(
       id,
       {

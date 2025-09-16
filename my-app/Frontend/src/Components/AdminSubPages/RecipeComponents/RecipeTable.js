@@ -60,6 +60,7 @@ export default function RecipeTable({
       const payload = {
         id: editedRecipe._id,
         name: editedRecipe.name,
+        retailPrice: editedRecipe.retailPrice,
         ingredients: editedRecipe.ingredients.map((ing) => ({
           inventoryItem: ing.inventoryItem._id,
           volume: ing.volume,
@@ -102,7 +103,7 @@ export default function RecipeTable({
       console.error("Inventory update failed:", error);
     }
   };
-  console.log(sortedList);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {recipes.map((recipe) => (

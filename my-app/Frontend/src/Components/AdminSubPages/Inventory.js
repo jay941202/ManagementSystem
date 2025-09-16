@@ -12,7 +12,7 @@ export default function Inventory() {
     price: "",
     inStock: "",
     updatesByEmp: "",
-    enough: false,
+    enough: true,
     unit: "",
     unitPerCase: 1,
   });
@@ -58,7 +58,10 @@ export default function Inventory() {
         volume: "",
         price: "",
         inStock: "",
-        updatesByEmp: false,
+        updatesByEmp: "",
+        enough: true,
+        unit: "",
+        unitPerCase: 1,
       });
       await fetchInventory();
     } catch (error) {

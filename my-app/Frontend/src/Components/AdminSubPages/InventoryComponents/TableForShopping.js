@@ -61,7 +61,7 @@ export default function TableForShopping({
   const handlePurchase = async (item) => {
     try {
       const token = localStorage.getItem("token");
-      const payload = { id: item._id, enough: true };
+      const payload = { id: item._id, ...item, enough: true };
       await API.put("inventory/updateInventory", payload, {
         headers: { Authorization: `Bearer ${token}` },
       });

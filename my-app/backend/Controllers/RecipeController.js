@@ -7,27 +7,7 @@ exports.getList = async (req, res) => {
       "ingredients.inventoryItem",
       "name unitPrice"
     );
-
-    const updatedRecipes = recipes.map((recipe) => {
-      const costOfGood = recipe.ingredients.reduce((sum, ing) => {
-        const unitPrice = ing.inventoryItem?.unitPrice || 0;
-        const volume = parseFloat(ing.volume || 0);
-        return sum + unitPrice * volume;
-      }, 0);
-
-      const margin =
-        recipe.retailPrice > 0
-          ? (recipe.retailPrice - costOfGood) / recipe.retailPrice
-          : 0;
-
-      return {
-        ...recipe.toObject(),
-        costOfGood,
-        margin,
-      };
-    });
-
-    res.json(updatedRecipes);
+    res.json(recipes);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch recipe" });
