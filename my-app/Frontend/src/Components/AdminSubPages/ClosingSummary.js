@@ -100,7 +100,7 @@ export default function ClosingSummary() {
       return { ...item, dateObj: new Date(year, month - 1, day) };
     })
     .filter((item) => item.dateObj >= oneWeekAgo && item.dateObj <= today)
-    .sort((a, b) => a.dateObj - b.dateObj);
+    .sort((a, b) => b.dateObj - a.dateObj);
 
   return (
     <div className="space-y-8 p-4">

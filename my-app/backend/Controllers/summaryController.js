@@ -3,7 +3,7 @@ const CashCount = require("../models/cashCountModel");
 
 exports.getRefundList = async (req, res) => {
   try {
-    const latest15 = await Refund.find().sort({ timestamp: -1 }).limit(15);
+    const latest15 = await Refund.find().sort({ createdAt: -1 }).limit(15);
 
     await Refund.deleteMany({
       _id: { $nin: latest15.map((r) => r._id) },
@@ -18,7 +18,7 @@ exports.getRefundList = async (req, res) => {
 
 exports.getCashCountList = async (req, res) => {
   try {
-    const latest15 = await CashCount.find().sort({ timestamp: -1 }).limit(15);
+    const latest15 = await CashCount.find().sort({ createdAt: -1 }).limit(15);
 
     await CashCount.deleteMany({
       _id: { $nin: latest15.map((c) => c._id) },

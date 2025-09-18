@@ -44,7 +44,7 @@ exports.confirmShift = async (req, res) => {
 exports.getScheduleList = async (req, res) => {
   try {
     const latest100 = await Schedule.find()
-      .sort({ timestamp: -1 })
+      .sort({ createdAt: -1 })
       .limit(100)
       .populate("AM.employees.employee", "name TipPercentage Active number")
       .populate("PM.employees.employee", "name TipPercentage Active number");
@@ -105,8 +105,6 @@ exports.clockInOut = async (req, res) => {
     const targetEmployee = employees.find(
       (e) => e.employee._id.toString() === employeeId
     );
-    console.log("Server Date:", new Date());
-    console.log("Calculated workday:", getWorkday());
 
     if (!targetEmployee)
       return res.status(404).json({ error: "Employee not found" });
